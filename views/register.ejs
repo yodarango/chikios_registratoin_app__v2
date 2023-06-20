@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+    crossorigin="anonymous"
+  />
+    <title>Register</title>
+<style>
+.dr_alert{
+    display: none;
+}
+
+.dr_form{
+        max-width: 500px;
+        margin: auto;
+    }
+</style>
+</head>
+<body>
+    <section class="container-sm"><h1 class="fs-3 mt-5">Register</h1>
+    <form  class="mt-5" id="registration-form">
+        <div class="form-group mt-3">
+            <label for="exampleInputEmail1">Admin First name</label>
+            <input type="text" class="form-control" id="exampleInputEmail1"  placeholder="First name" name="admin_first_name" required>
+          </div>
+          <div class="form-group mt-3">
+              <label for="exampleInputEmail1">Admin Last name</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Last name" name="admin_last_name" required>
+            </div>
+        <div class="form-group mt-3">
+          <label for="exampleInputEmail1">Organization Username</label>
+          <input type="text" class="form-control" id="exampleInputEmail1"  placeholder="Enter username" name="username" required>
+        </div>
+        <div class="form-group mt-3">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter emaill" name="admin_email" required>
+          </div>
+        <div class="form-group mt-3">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="Password" name="admin_password" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Register</button>
+        <p class="my-2">Already have an account?</p>
+        <div>
+            <a href="/login" class="btn btn-secondary mt-2 ml-2">Login instead</a>
+        </div>
+        
+
+        <div class="my-3 alert alert-primary alert-danger dr_alert" role="alert" id="email-warning">An account associated with this email already exists. Please login instead!</div>
+        <div class="my-3 alert alert-primary alert-danger dr_alert" role="alert" id="username-warning">An account associated with this username already exists. Please login instead!</div>
+      </form>
+     
+    </section>
+
+    <script>
+        const sendRequest = async (data)=>{
+             // send the request
+             const request = await fetch('/register', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+
+        const response = await request.json();
+        console.log(response)
+
+        if(response.error === 1){
+            document.getElementById("username-warning").style.display= "none"
+            document.getElementById("email-warning").style.display= "block"
+            return 
+        }
+
+        if(response.error === 2){
+            document.getElementById("email-warning").style.display= "none"
+            document.getElementById("username-warning").style.display= "block"
+            return 
+        }
+
+        if(response.token){
+            let date = new Date(Date.now() + 86400e3);
+            date = date.toUTCString();
+
+            document.cookie  = `authorization=${response.token}; path=/;samesite=strict;expires=${date};`
+            location.href = '/admin'
+        }
+
+        }
+
+        // --------------- prevent default of submission and send teh info in the body as JSON
+        const handleRegistration= (e)=>{
+            e.preventDefault()
+
+            const inputs = document.getElementsByTagName("input");
+            const data = {};
+
+            for(let i = 0; i < inputs.length ; i++ ){
+                data[inputs[i].name] = inputs[i].value
+            }
+
+            sendRequest(data);
+        }
+
+        // ----------- get submission form
+        const registrationForm = document.getElementById("registration-form")
+
+        // ---------- add event to the form 
+        registrationForm.addEventListener("submit", handleRegistration);
+
+       
+    </script>
+</body>
+</html>

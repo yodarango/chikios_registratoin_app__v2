@@ -1,0 +1,317 @@
+/* ------------------------ GENERAL STYLES --------------------------  */
+@import url("https://use.typekit.net/yex2atj.css");
+
+:root {
+  /*-------------- Fonts----------*/
+  --primary-font: 400 2rem fredericka-the-greatest, serif;
+  --secondary-font: 500 italic 2.5rem swister, sans-serif; /* 700 */
+  --accent-font: 700 2.83rem acumin-pro, sans-serif;
+
+  /*------------- Colors ---------------*/
+  --primary-color: #5b7fff;
+  --secondary-color: #63d9ff;
+  --third-color: #04fed1;
+  --fourth-color: #1400ff;
+  --font-color: #5b7fff;
+  --accent-color: #fff;
+  --warning-color: #ec3b3b;
+  --success-color: #90d171;
+
+  /*--------- Spacing Specs --------*/
+  --xlarge-spacing: 6rem;
+  --large-spacing: 4rem;
+  --medium-spacing: 3rem;
+  --small-spacing: 2rem;
+  --xsmall-spacing: 1rem;
+
+  /*-------- Sizing Specs --------*/
+  --icon-sizing: 2rem;
+  --button-padding: 0.5rem 0;
+  --input-padding: 0.5rem;
+
+  /*---------- Main Wrapper --------*/
+  --main-wrapper: 92%;
+  --max-width-main-wrapper: 50rem;
+
+  /*------------ Breaks ------------*/
+  --ipad-break: 600px;
+  --laptop-break: 800px;
+  --desktop-break: 1050px;
+}
+
+@media (min-width: var(--ipad-break)) {
+  :root {
+    /*------------ Spacing Specs -----------*/
+    --xlarge-spacing: 7rem;
+    --large-spacing: 5rem;
+    --medium-spacing: 3.5rem;
+    --small-spacing: 2.5rem;
+    --xsmall-spacing: 1.5rem;
+
+    /*------------- Main Wrapper -------------*/
+    --max-width-main-wrapper: 80rem;
+  }
+}
+
+@media (min-width: var(--desktop-break)) {
+  :root {
+    /*----------- Fonts -------------*/
+    --primary-font: 400 2.5rem acumin-pro, sans-serif;
+    --secondary-font: 300 italic 2.5rem acumin-pro, sans-serif;
+    --accent-font: 700 1.35rem acumin-pro, sans-serif;
+
+    /*----------- Spacing Specs ----------*/
+    --xlarge-spacing: 8rem;
+    --large-spacing: 6rem;
+    --medium-spacing: 4rem;
+    --small-spacing: 3rem;
+    --xsmall-spacing: 2rem;
+
+    /*------------ Sizing Specs -------------*/
+    --icon-sizing: 2.5rem;
+    --button-padding: 0.6rem 0;
+    --input-padding: 0.6rem;
+
+    /*------------- Main Wrapper -------------*/
+    --max-width-main-wrapper: 62.5rem;
+  }
+}
+
+* {
+  font-size: 100%;
+  border: none;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  font-style: none;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  overflow-x: hidden;
+  line-height: 1.8em;
+  font: var(--primary-font);
+  color: var(--font-color);
+}
+
+a:visited,
+a:active,
+a:link {
+  color: inherit;
+  text-decoration: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/*------------------------GENERAL STYLING -----------------------*/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.std-title {
+  font: var(--primary-font);
+  color: var(--font-color);
+  text-align: center;
+  margin: var(--medium-spacing) auto;
+  width: 100%;
+}
+
+h2 {
+  font-size: 1.688rem;
+}
+
+h3 {
+  font-size: 1.563rem;
+  margin: var(--small-spacing) auto;
+}
+
+h4,
+.std-title--small {
+  font-size: 1.375rem;
+  margin: var(--small-spacing) auto;
+}
+
+h5,
+h6 {
+  font-size: 1.2rem;
+  margin: var(--small-spacing) auto;
+}
+
+p,
+.std-text,
+.std-text--secondary {
+  font: var(--primary-font);
+  color: var(--font-color);
+  text-align: center;
+  margin: var(--medium-spacing) auto;
+  width: 100%;
+}
+
+.std-gradient-text {
+  background-image: linear-gradient(
+    45deg,
+    var(--third-color),
+    var(--fourth-color)
+  );
+  background-size: 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+/*-------------------------------- STANDARDS ------------------------------------*/
+.hidden {
+  display: none;
+}
+/*--------------- Buttons:                                                      */
+button,
+.std-button {
+  display: block;
+  padding: var(--button-padding);
+  text-align: center;
+  border: none;
+}
+
+button:hover,
+.std-button:hover {
+  cursor: pointer;
+}
+
+/*--------------- Input:                                                       */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+.std-input {
+  display: block;
+  padding: var(--input-padding);
+  font: var(--primary-font);
+  outline: none;
+  border: none;
+}
+
+input[type="radio"],
+input[type="file"],
+input[type="checkbox"] {
+  display: none;
+}
+
+/*--------------- Text:                                                        */
+.std-text--secondary {
+  font: var(--secondary-font);
+}
+
+/*--------------- Images:                                                      */
+img,
+.std-img {
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  -o-object-fit: cover;
+  -o-object-position: center;
+  display: block;
+  margin: var(--medium-spacing) auto;
+}
+
+.std-bkg {
+  display: block;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.std-icon {
+  display: block;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: var(--icon-sizing);
+  height: var(--icon-sizing);
+}
+
+/*--------------- Containers:                                                     */
+.std-flex-row,
+.std-flex-column,
+.std-flex-nowrap,
+.std-flex-justify-start,
+.std-flex-justify-end,
+.std-flex-align-start,
+.std-flex-align-end {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.std-flex-column {
+  flex-flow: column;
+}
+
+.std-flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.std-flex-justify-start {
+  justify-content: flex-start;
+}
+
+.std-flex-justify-between {
+  justify-content: space-between;
+}
+
+.std-flex-justify-around {
+  justify-content: space-around;
+}
+
+.std-flex-justify-end {
+  justify-content: flex-end;
+}
+
+.std-flex-align-start {
+  align-items: flex-start;
+}
+
+.std-flex-align-end {
+  align-items: flex-end;
+}
+
+.std-spacer-s {
+  height: var(--small-spacing);
+  width: 100%;
+}
+
+.std-spacer-m {
+  height: var(--medium-spacing);
+  width: 100%;
+}
+
+.std-spacer-l {
+  height: var(--large-spacing);
+  width: 100%;
+}
+.std-spacer-xl {
+  height: var(--xlarge-spacing);
+  width: 100%;
+}
+
+/* ---------------- Particular To This Project --------- */

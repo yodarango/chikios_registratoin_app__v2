@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/utilities.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <title>Document</title>
+  </head>
+  <body onload="getUsers()">
+    <main>
+      <div id="count">
+        <h1
+          class="fs-2 fw-bold my-5 border-bottom d-flex align-items-center justify-content-between"
+        ></h1>
+      </div>
+      <div class="w-100 d-flex align-items-center justify-content-start mb-5">
+        <input
+          type="text"
+          placeholder="Search by last name "
+          class="form_input p-3 bg-info-subtle rounded-3 w-100 me-3"
+          id="search"
+        />
+        <button
+          class="bg-quaternary flex-shrink-0 my-0 me-3 color-primary"
+          onclick="handleSearch()"
+        >
+          Search
+        </button>
+        <button
+          class="bg-tertiary color-primary flex-shrink-0 m-0"
+          onclick="handleReset()"
+        >
+          Reset
+        </button>
+      </div>
+      <div id="users-table"></div>
+
+      <button
+        data-results="0"
+        class="w-100 bg-quaternary color-primary load-more my-5"
+        onclick="handleLoadMore()"
+      >
+        More results
+      </button>
+    </main>
+  </body>
+
+  <!-- get users  -->
+  <script>
+    async function getUsers(count = "fromid=0", ln = "", isLoadMore = false) {
+      const loadMore = document.querySelector(".load-more");
+      const usersTable = document.getElementById("users-table");
+      const countEl = document.querySelector("#count h1");
+
+      if (!isLoadMore) usersTable.innerHTML = "";
+
+      const auth = localStorage.getItem("auth") || null;
+
+      if (!auth) return (window.location.href = "/admin/login.html");
+
+      try {
+        const req = await fetch("/admin/users?" + count + `&${ln}`, {
+          METHOD: "GET",
+          headers: {
+            auth,
+          },
+        });
+        const res = await req.json();
+
+        console.log(res);
+
+        if (res.length === 20) {
+          loadMore.classList.remove("d-none");
+          loadMore.classList.add("d-block");
+          const currentCount = loadMore.dataset.results;
+          loadMore.dataset.results = `${Number(currentCount) + 20}`;
+        } else {
+          loadMore.classList.remove("d-block");
+          loadMore.classList.add("d-none");
+        }
+
+        const kids = res?.kids || [];
+        countEl.innerHTML = `<span>Total registrations:</span> <span>${res.count}</span>`;
+
+        for (let user of kids) {
+          const wrapper = document.createElement("div");
+
+          const card = `
+         <div class="d-flex align-items-center justify-content-start p3 mx-0 mb-4 rounded-3 card">
+            <a href="/admin/user.html?user=${user._id}"><img src="/photos/${
+            user.profile_picture
+          }" alt="avatar" class="avatar d-block rounded-3 me-4 flex-nowrap" />
+            </a>
+            <h3 class="me-4 my-0 w-100">${user.first_name} ${user.last_name}, ${
+            user.age
+          }</h3>
+
+            <button onclick="check('${user._id}', '${user.checked_in}')" id="${
+            user._id
+          }" class=" ${
+            user.checked_in
+              ? "checked_in bg-success rounded-circle d-block flex-nowrap"
+              : "checked_out bg-danger rounded-circle nd-block flex-nowrap"
+          }"></button>
+        </div>
+         `;
+          wrapper.innerHTML = card;
+          usersTable.appendChild(wrapper);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  </script>
+
+  <!-- check status -->
+  <script>
+    const check = async (id, status) => {
+      const userId = document.getElementById(id);
+
+      if (!id) return;
+
+      const path =
+        `/kids/${
+          status == "false" || status == false ? "check-in" : "check-out"
+        }/` + id;
+      console.log(path);
+      try {
+        const req = await fetch(
+          path,
+
+          {
+            method: "PUT",
+          }
+        );
+        const res = await req.json();
+
+        if ((res.status === 200 && status == "false") || status == false) {
+          userId.classList.remove("checked_out", "bgq-danger");
+          userId.classList.add("checked_in", "bg-success");
+        } else if ((res.status === 200 && status == "true") || status == true) {
+          userId.classList.remove("checked_in", "bg-success");
+          userId.classList.add("checked_out", "bg-danger");
+        }
+        console.log(res);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  </script>
+
+  <!-- search -->
+  <script>
+    function handleSearch() {
+      let search = document.getElementById("search");
+      search = search.value || "";
+      getUsers("", `ln=${search}`);
+    }
+  </script>
+
+  <!-- reset -->
+  <script>
+    function handleReset() {
+      document.getElementById("search").value = "";
+      getUsers();
+    }
+  </script>
+
+  <!-- load more -->
+  <script>
+    function handleLoadMore() {
+      let count = document.querySelector(".load-more");
+      let search = document.getElementById("search");
+      search = search?.value ? `ln=${search.value}` : "";
+      count = count ? count.dataset.results : "0";
+
+      getUsers(`fromid=${count}`, search, true);
+    }
+  </script>
+</html>
