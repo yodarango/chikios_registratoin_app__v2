@@ -21,20 +21,10 @@
 
         const userId = location.search.split("user=")[1];
 
-        const auth = localStorage.getItem("auth") || null;
-
-        if (!auth) return (window.location.href = "/admin/login.html");
-
         try {
-          const req = await fetch("/admin/kid" + `/${userId}`, {
-            headers: {
-              auth,
-            },
-          });
+          const req = await fetch("/admin/kid" + `/${userId}`, {});
           let user = await req.json();
           user = user.kids[0];
-
-          console.log(user);
 
           const wrapper = document.createElement("div");
           wrapper.classList.add("py-5");
@@ -205,7 +195,6 @@
     <!-- check status -->
     <script>
       async function check(id, status) {
-        console.log(id, status);
         const userId = document.getElementById("checkbtn");
         const textContent = document.querySelector("#checkbtn b");
         const checkIcon = document.querySelector("#check-icon");
@@ -228,7 +217,7 @@
             textContent.textContent = "Check-In";
             checkIcon.classList.remove("checked_in");
             checkIcon.classList.add("checked_out");
-            userId.setAttribute("onclick", `check(${id}, 0)`);
+            userId.setAttribute("onclick", `check("${id}", "false")`);
           } else if (
             (res.status === 200 && status === "false") ||
             status === false
@@ -238,7 +227,7 @@
             textContent.textContent = "Check-Out";
             checkIcon.classList.remove("checked_out");
             checkIcon.classList.add("checked_in");
-            userId.setAttribute("onclick", `check(${id}, 1)`);
+            userId.setAttribute("onclick", `check("${id}", "true")`);
           }
         } catch (error) {
           console.error(error);

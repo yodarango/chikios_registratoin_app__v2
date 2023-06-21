@@ -24,7 +24,7 @@ router.get("/user", (req, res) => {
   res.sendFile(join(pub, "admin", "user.html"));
 });
 
-router.get("/users", async (req, res) => {
+router.get("/users", authenticateToken, async (req, res) => {
   try {
     if (req.query.ln) {
       const lastname = `${req.query.ln.toLocaleLowerCase()}`;
@@ -53,8 +53,7 @@ router.get("/users", async (req, res) => {
   }
 });
 
-router.get("/kid/:id", async (req, res) => {
-  console.log(req.params.id);
+router.get("/kid/:id", authenticateToken, async (req, res) => {
   try {
     if (req.params.id) {
       const kids = await Kid.find({ _id: req.params.id });
@@ -67,7 +66,7 @@ router.get("/kid/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     if (req.params.id) {
       const deleted = await Kid.deleteOne({ _id: req.params.id });

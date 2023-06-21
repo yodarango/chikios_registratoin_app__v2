@@ -57,20 +57,11 @@
 
       if (!isLoadMore) usersTable.innerHTML = "";
 
-      const auth = localStorage.getItem("auth") || null;
-
-      if (!auth) return (window.location.href = "/admin/login.html");
-
       try {
         const req = await fetch("/admin/users?" + count + `&${ln}`, {
           METHOD: "GET",
-          headers: {
-            auth,
-          },
         });
         const res = await req.json();
-
-        console.log(res);
 
         if (res.length === 20) {
           loadMore.classList.remove("d-none");
@@ -120,6 +111,9 @@
   <script>
     const check = async (id, status) => {
       const userId = document.getElementById(id);
+      userId.classList.remove("checked_out", "bgq-danger");
+      userId.classList.remove("checked_in", "bg-success");
+      userId.classList.add("d-none");
 
       if (!id) return;
 
@@ -127,7 +121,7 @@
         `/kids/${
           status == "false" || status == false ? "check-in" : "check-out"
         }/` + id;
-      console.log(path);
+
       try {
         const req = await fetch(
           path,
@@ -139,13 +133,16 @@
         const res = await req.json();
 
         if ((res.status === 200 && status == "false") || status == false) {
-          userId.classList.remove("checked_out", "bgq-danger");
           userId.classList.add("checked_in", "bg-success");
+          userId.setAttribute("onclick", `check("${id}", "true")`);
+          userId.classList.remove("d-none");
+          userId.classList.add("d-block");
         } else if ((res.status === 200 && status == "true") || status == true) {
-          userId.classList.remove("checked_in", "bg-success");
           userId.classList.add("checked_out", "bg-danger");
+          userId.setAttribute("onclick", `check("${id}", "false")`);
+          userId.classList.remove("d-none");
+          userId.classList.add("d-block");
         }
-        console.log(res);
       } catch (error) {
         console.error(error);
       }

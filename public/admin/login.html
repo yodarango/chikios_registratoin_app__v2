@@ -77,7 +77,6 @@
           });
           const res = await req.json();
 
-          console.log(res);
           if (res.token) {
             document.cookie = `authorization=${res.token}; expires=Thu, 18 Dec 2043 12:00:00 UTC; path=/`;
 
@@ -85,8 +84,6 @@
           } else {
             alert("Wrong username or password, please try again!");
           }
-
-          console.log(res);
         } catch (error) {
           console.error(error);
         }

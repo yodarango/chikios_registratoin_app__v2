@@ -96,8 +96,6 @@ router.put("/check-out/:id", authenticateToken, async (req, res) => {
     kid.checked_in = false;
     kid.changed_at = currTime();
 
-    console.log(kid);
-
     const updated = await kid.save();
 
     res.send({
