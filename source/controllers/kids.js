@@ -48,6 +48,7 @@ router.post("/upload-photo", async (req, res) => {
   const timestamp = Date.now();
   const filename = `${timestamp}.png`;
 
+console.log("submission");
   async function savePhoto(base64) {
     try {
       const split = base64.split(",");
