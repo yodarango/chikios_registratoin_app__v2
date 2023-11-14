@@ -12,17 +12,20 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pub = join(__dirname, "..", "..", "public");
 
-// ----------- middleware
+// middleware
 import { generateAccessToken } from "../helpers/auth/sign_new_token.js";
 
+// register
 router.get("/", async (req, res) => {
   res.sendFile(join(pub, "index.html"));
 });
 
+// login
 router.get("/login", async (req, res) => {
   res.sendFile(join(pub, "admin", "login.html"));
 });
 
+// login
 router.post("/login", async (req, res) => {
   if (req.cookies.authorization) {
     res.redirect("/admin/users");

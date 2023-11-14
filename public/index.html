@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/utilities.css" />
     <link rel="stylesheet" href="/css/app.css" />
 
-    <title>Document</title>
+    <title>Shrood | Chikios</title>
   </head>
   <body>
     <main>
@@ -228,6 +228,7 @@
         </section>
       </div>
     </main>
+    <div style="width: 100%; height: 5rem"></div>
   </body>
 </html>
 
@@ -283,7 +284,6 @@
 
       file = await convert(file, 500);
       try {
-
         const req = await fetch("/kids/upload-photo", {
           method: "POST",
           body: JSON.stringify({ file }),
@@ -293,7 +293,7 @@
         });
 
         const res = await req.json();
-	
+
         if (res.status === 200) {
           button.querySelector("button").remove();
           button.querySelector(".bg-warning").remove();

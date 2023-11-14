@@ -2,7 +2,6 @@
 import express from "express";
 const router = express.Router();
 import cors from "cors";
-// import { promises as fsPromises } from "fs";
 import { promises } from "fs";
 import { join } from "path";
 import { dirname } from "path";
@@ -18,37 +17,18 @@ router.use(express.json({ limit: "3mb" }));
 router.use(express.urlencoded({ extended: true }));
 
 // models
-import { Kid } from "../db/models/kid.js";
 import { currTime } from "../helpers/temp/current_time.js";
 import { authenticateToken } from "../helpers/auth/authenticate_token.js";
+import { executeQuery } from "../db/connection.js";
 
 router.use(cors());
-// ---------- get request
-router.post("/register", async (req, res, next) => {
-  const newKid = new Kid({
-    ...req.body,
-    created: new Date(),
-    changed_at: new Date(),
-    checked_in: false,
-    profile_picture: req.body.profile_picture?.split("/photos/")[1] || "",
-  });
 
-  try {
-    const kid = await newKid.save();
-
-    res.send({ success: "child successfully registered", id: kid._id });
-  } catch (error) {
-    console.log(error);
-    res.send({ error, id: null });
-    return `the following error ocurred ${error}`;
-  }
-});
-
+// write photo to disk
 router.post("/upload-photo", async (req, res) => {
   const timestamp = Date.now();
   const filename = `${timestamp}.png`;
 
-console.log("submission");
+  console.log("writing photo to disk...");
   async function savePhoto(base64) {
     try {
       const split = base64.split(",");
@@ -70,6 +50,39 @@ console.log("submission");
   }
 
   savePhoto(req.body.file);
+});
+
+// register the child
+router.post("/register", async (req, res, next) => {
+  const {
+    guardian_phone_number: phone_number,
+    guardian_first_name: g_first_name,
+    guardian_last_name: g_last_name,
+    profile_picture,
+    first_name,
+    last_name,
+    gender,
+    age,
+  } = req.body;
+
+  try {
+    const insertKid = await executeQuery(
+      `INSERT INTO registrant (first_name, last_name, age, gender, profile_picture)
+       VALUES(?, ?, ?, ?, ?);`,
+      [first_name, last_name, age, gender, profile_picture]
+    );
+
+    // const insertParent = await executeQuery(
+    //   "SELECT first_name, last_name, age, gender, profile_picture FROM registrant",
+    //   []
+    // );
+
+    console.log(insertKid);
+  } catch (error) {
+    console.log(error);
+    res.send({ error, id: null });
+    return `the following error ocurred ${error}`;
+  }
 });
 
 router.put("/check-in/:id", authenticateToken, async (req, res) => {

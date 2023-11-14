@@ -6,7 +6,6 @@ const router = express.Router();
 import { authenticateToken } from "../helpers/auth/authenticate_token.js";
 
 // models
-import { Kid } from "../db/models/kid.js";
 import { join } from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
