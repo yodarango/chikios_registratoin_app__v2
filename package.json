@@ -1,7 +1,7 @@
 {
-  "name": "chikios_be_tmp",
+  "name": "chikios_shrood_app",
   "version": "1.0.0",
-  "description": "API for the chikios app",
+  "description": "Registration software",
   "type": "module",
   "main": "index.js",
   "scripts": {
