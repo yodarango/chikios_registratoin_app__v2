@@ -9,12 +9,12 @@ import { authenticateToken } from "../helpers/auth/authenticate_token.js";
 import { join } from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { executeQuery } from "../db/connection.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pub = join(__dirname, "..", "..", "public");
 
-// ---------- get request
-
+// render the html
 router.get("/", (req, res) => {
   res.sendFile(join(pub, "admin", "users.html"));
 });
@@ -23,41 +23,59 @@ router.get("/user", (req, res) => {
   res.sendFile(join(pub, "admin", "user.html"));
 });
 
+// get all the users
 router.get("/users", authenticateToken, async (req, res) => {
   try {
+    // find a child by last name
     if (req.query.ln) {
-      const lastname = `${req.query.ln.toLocaleLowerCase()}`;
+      const kids = await executeQuery(
+        `SELECT * FROM registrant WHERE last_name LIKE ?`,
+        [`%${req.query.ln}%`]
+      );
 
-      const count = await Kid.count();
-      let kids = await Kid.find({ last_name: { $regex: lastname } });
+      const count = kids.results.length;
 
-      // kids = kids.map((k) => ({ ...k, id: k._id }));
-
-      res.send({ kids, count });
+      res.send({ kids: kids.results, count });
       return;
     }
 
-    const count = await Kid.count();
-    let kids = await Kid.find({})
-      .sort({ last_name: 1 })
-      .limit(10)
-      .skip(req.query.skip);
+    const skip = req.query.skip || 1000;
+    const kids = await executeQuery(
+      `SELECT * FROM registrant WHERE ID < ? LIMIT 20`,
+      [skip]
+    );
 
-    // kids = kids.map((k) => ({ ...k._doc, id: k._id }));
+    const kidCount = await executeQuery(
+      `SELECT COUNT(ID) as count FROM registrant`,
+      [skip]
+    );
 
-    res.send({ kids, count });
+    const count = kidCount.results[0]?.count;
+
+    res.send({ kids: kids.results, count });
+    return;
   } catch (error) {
     console.log(error);
     return `the following error ocurred ${error}`;
   }
 });
 
+// get the registrant's info as well as the child info
 router.get("/kid/:id", authenticateToken, async (req, res) => {
   try {
     if (req.params.id) {
-      const kids = await Kid.find({ _id: req.params.id });
+      const kids = await executeQuery(
+        `
+      SELECT r.*, r.first_name as guardian_first_name, r.last_name as guardian_last_name, g.phone_number as guardian_phone_number 
+      FROM registrant as r 
+      LEFT JOIN guardian as g
+      ON r.ID = g.registrant_id
+      WHERE r.ID  = ?
+      `,
+        [req.params.id]
+      );
 
-      res.send({ kids, status: 200 });
+      res.send({ kids: kids.results, status: 200 });
     }
   } catch (error) {
     console.log(error);
@@ -65,12 +83,20 @@ router.get("/kid/:id", authenticateToken, async (req, res) => {
   }
 });
 
-router.delete("/:id", authenticateToken, async (req, res) => {
+router.delete("/kid/delete/:id", authenticateToken, async (req, res) => {
   try {
-    if (req.params.id) {
-      const deleted = await Kid.deleteOne({ _id: req.params.id });
-      if (deleted) res.send(true);
+    const kids = await executeQuery(
+      `
+      DELETE FROM registrant WHERE ID  = ?
+      `,
+      [req.params.id]
+    );
+
+    if (!(kids.results.affectedRows > 0)) {
+      return res.send({ kids: null, status: 500 });
     }
+
+    return res.send({ kids: kids.results.affectedRows, status: 200 });
   } catch (error) {
     res.send(false);
     console.log(error);

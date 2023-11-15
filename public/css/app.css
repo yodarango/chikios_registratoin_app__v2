@@ -140,7 +140,8 @@ body {
 }
 
 .checked_out,
-.checked_in {
+.checked_in,
+.delete {
   height: 3rem;
   width: 3rem;
   background-position: center;
@@ -157,6 +158,10 @@ body {
   background-image: url(/images/checkmark.svg);
 }
 
+.delete {
+  background-image: url(/images/trash.svg);
+  background-size: 80%;
+}
 main {
   width: 90%;
   max-width: 500px;

@@ -196,7 +196,6 @@
               </div>
               <div class="w-100">
                 <input
-                  type="text"
                   placeholder="Enter phone number"
                   class="form_input p-3 rounded-3 w-100"
                   id="gphone"
@@ -373,7 +372,7 @@
     const gender = document.getElementById("gender").value;
     const guardian_fn = document.getElementById("gfn").value;
     const guardian_ln = document.getElementById("gln").value;
-    const phone_number = document.getElementById("gphone").value;
+    const guardian_phone_number = document.getElementById("gphone").value;
     const profile_picture = document.getElementById("img-url").value;
 
     const canContinue = validateInputs();
@@ -388,7 +387,7 @@
       checked_in: 0,
       guardian_first_name: guardian_fn,
       guardian_last_name: guardian_ln,
-      guardian_phone_number: parseInt(phone_number),
+      guardian_phone_number,
     });
 
     if (!canContinue) {
@@ -410,6 +409,8 @@
       if (res?.id) {
         const router = `/success.html?user=${res?.id}`;
         location.href = router;
+      } else {
+        alert("Something went wrong, please try again!");
       }
     } catch (error) {
       console.error(error);
@@ -417,6 +418,56 @@
   };
 </script>
 
+<!-- validate my inputs -->
+<script>
+  function validateInputs() {
+    const first_name = document.getElementById("fn").value;
+    const last_name = document.getElementById("ln").value;
+    const ageString = document.getElementById("age").value;
+    const gender = document.getElementById("gender").value;
+    const guardian_fn = document.getElementById("gfn").value;
+    const guardian_ln = document.getElementById("gln").value;
+    const phone_number = document.getElementById("gphone").value;
+    const profile_picture = document.getElementById("img-url").value;
+
+    const age = Number(ageString || "1");
+
+    // Check if any of the required fields are empty or equal to zero
+    if (!first_name || !last_name) {
+      alert("Name and last name of the child are required!");
+      return false;
+    }
+
+    if (!(age > 3) || !(age < 12)) {
+      alert("Age ranges are 4 - 11");
+      return false;
+    }
+
+    if (!(gender > 0)) {
+      alert("Please enter the gender");
+      return false;
+    }
+
+    if (!guardian_fn || !guardian_ln) {
+      alert("Guardian first and last name required ");
+      return false;
+    }
+
+    if (!phone_number) {
+      alert("Guardian phone number is required");
+      return false;
+    }
+
+    if (!profile_picture) {
+      alert("Photo missing. Please submit a photo of your child");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+<!-- styles for selecting the gender btn.  -->
 <script>
   function handleGender(value, gender) {
     const radioInput = document.getElementById("gender");
@@ -431,36 +482,5 @@
     buttonContainer.classList.add("active");
 
     radioInput.value = value;
-  }
-</script>
-
-<!-- validate my inputs -->
-<script>
-  function validateInputs() {
-    const first_name = document.getElementById("fn").value;
-    const last_name = document.getElementById("ln").value;
-    const age = document.getElementById("age").value;
-    const gender = document.getElementById("gender").value;
-    const guardian_fn = document.getElementById("gfn").value;
-    const guardian_ln = document.getElementById("gln").value;
-    const phone_number = document.getElementById("gphone").value;
-    const profile_picture = document.getElementById("img-url").value;
-
-    // Check if any of the required fields are empty or equal to zero
-    if (
-      first_name &&
-      last_name &&
-      age > 3 &&
-      gender > 0 &&
-      guardian_fn &&
-      guardian_ln &&
-      phone_number &&
-      profile_picture
-    ) {
-      return true;
-    } else {
-      alert("Please fill in all required fields");
-      return false;
-    }
   }
 </script>

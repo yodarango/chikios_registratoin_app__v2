@@ -42,7 +42,7 @@ router.post("/upload-photo", async (req, res) => {
 
       await fsPromises.writeFile(path, buffer);
 
-      res.send({ path, status: 200 });
+      res.send({ path: `${filename}`, status: 200 });
     } catch (error) {
       console.log(error);
       res.send({ error: "error uploading photo", status: 500 });
@@ -55,7 +55,7 @@ router.post("/upload-photo", async (req, res) => {
 // register the child
 router.post("/register", async (req, res, next) => {
   const {
-    guardian_phone_number: phone_number,
+    guardian_phone_number: g_phone_number,
     guardian_first_name: g_first_name,
     guardian_last_name: g_last_name,
     profile_picture,
@@ -72,12 +72,36 @@ router.post("/register", async (req, res, next) => {
       [first_name, last_name, age, gender, profile_picture]
     );
 
-    // const insertParent = await executeQuery(
-    //   "SELECT first_name, last_name, age, gender, profile_picture FROM registrant",
-    //   []
-    // );
+    // the Kid record was not inserted
+    if (!(insertKid.results.insertId > 0)) {
+      res.status(500).send({
+        success: null,
+        error: "error saving registrant record",
+        id: null,
+      });
+      return;
+    }
 
-    console.log(insertKid);
+    // get the child ID and insert the parent now
+    const insertParent = await executeQuery(
+      `INSERT INTO guardian (first_name, last_name, phone_number, registrant_id)
+       VALUES(?, ?, ?, ?)`,
+      [g_first_name, g_last_name, g_phone_number, insertKid.results.insertId]
+    );
+
+    if (!(insertParent.results.insertId > 0)) {
+      res.status(500).send({
+        success: null,
+        error: "error saving guardian record",
+        id: null,
+      });
+      return;
+    }
+
+    res.send({
+      success: "child successfully registered",
+      id: insertKid.results.insertId,
+    });
   } catch (error) {
     console.log(error);
     res.send({ error, id: null });
@@ -87,15 +111,27 @@ router.post("/register", async (req, res, next) => {
 
 router.put("/check-in/:id", authenticateToken, async (req, res) => {
   try {
-    const kid = await Kid.findOne({ _id: req.params.id });
-    kid.checked_in = true;
-    kid.changed_at = currTime();
+    // get the child ID and insert the parent now
+    const checkIn = await executeQuery(
+      `UPDATE registrant 
+      SET checked_in = TRUE 
+      WHERE ID = ?`,
+      [req.params.id]
+    );
 
-    const updated = await kid.save();
+    if (!(checkIn.results.affectedRows > 0)) {
+      res.status(500).send({
+        id: null,
+        time: null,
+        status: 500,
+        error: "Error checking-in record",
+      });
 
-    res.send({
-      id: updated._id,
-      time: updated.changed_at,
+      return;
+    }
+    res.status(200).send({
+      id: req.params.id,
+      time: currTime(),
       status: 200,
     });
   } catch (error) {
@@ -106,15 +142,28 @@ router.put("/check-in/:id", authenticateToken, async (req, res) => {
 
 router.put("/check-out/:id", authenticateToken, async (req, res) => {
   try {
-    const kid = await Kid.findOne({ _id: req.params.id });
-    kid.checked_in = false;
-    kid.changed_at = currTime();
+    // get the child ID and insert the parent now
+    const checkOut = await executeQuery(
+      `UPDATE registrant 
+      SET checked_in = FALSE 
+      WHERE ID = ?`,
+      [req.params.id]
+    );
 
-    const updated = await kid.save();
+    if (!(checkOut.results.affectedRows > 0)) {
+      res.status(500).send({
+        id: null,
+        time: null,
+        status: null,
+        error: "Error checking-in record",
+      });
 
-    res.send({
-      id: updated._id,
-      time: updated.changed_at,
+      return;
+    }
+
+    res.status(200).send({
+      id: req.params.id,
+      time: currTime(),
       status: 200,
     });
   } catch (error) {
