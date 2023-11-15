@@ -25,5 +25,5 @@ app.use("/admin", adminControllers);
 app.use("/", mainControllers);
 
 app.listen(process.env.PORT, () => {
-  console.log(`listening on post ${process.env.PORT}`);
+  console.log(`listening on port ${process.env.PORT}`);
 });
