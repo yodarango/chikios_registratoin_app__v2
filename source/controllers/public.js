@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
 
   try {
     if (
-      req?.body?.username === "admin" &&
+      req?.body?.username.toLowerCase() === "admin" &&
       req?.body?.password === "K1dzqu35T_NYC_202E"
     ) {
       const token = await generateAccessToken({

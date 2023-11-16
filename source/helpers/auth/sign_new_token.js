@@ -10,7 +10,7 @@ export const generateAccessToken = async (user) => {
     process.env.JWT_SECRET,
     {
       expiresIn: "14d", // 14 days from now
-      httpOnly: true,
+      // httpOnly: true,
     }
     // (err, token) => {
     //   if (err) {
