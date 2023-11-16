@@ -407,7 +407,7 @@
       const res = await req.json();
 
       if (res?.id) {
-        const router = `/success.html?user=${res?.id}`;
+        const router = `/success.html?user=${res?.id}&name=${first_name}`;
         location.href = router;
       } else {
         alert("Something went wrong, please try again!");
