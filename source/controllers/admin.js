@@ -62,6 +62,7 @@ router.get("/users", async (req, res) => {
 
 // get the registrant's info as well as the child info
 router.get("/kid/:id", async (req, res) => {
+  console.log(req.params.id);
   try {
     if (req.params.id) {
       const kids = await executeQuery(
@@ -70,10 +71,12 @@ router.get("/kid/:id", async (req, res) => {
       FROM registrant as r 
       LEFT JOIN guardian as g
       ON r.ID = g.registrant_id
-      WHERE r.ID  = ?
+      WHERE r.ID = ?
       `,
         [req.params.id]
       );
+
+      console.log(kids);
 
       res.send({ kids: kids.results, status: 200 });
     }

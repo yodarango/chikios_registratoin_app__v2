@@ -15,6 +15,7 @@ const pub = join(__dirname, "..", "..", "public");
 // middleware
 import { generateAccessToken } from "../helpers/auth/sign_new_token.js";
 import { authenticateToken } from "../helpers/auth/authenticate_token.js";
+import { executeQuery } from "../db/connection.js";
 
 // register
 router.get("/", async (req, res) => {
@@ -55,38 +56,45 @@ router.post("/login", async (req, res) => {
 // get all the users
 router.get("/home/users", async (req, res) => {
   try {
-    // find a child by last name
-    if (req.query.ln) {
-      const kids = await executeQuery(
-        `SELECT * FROM registrant WHERE last_name LIKE ?`,
-        [`%${req.query.ln}%`]
-      );
-
-      const count = kids.results.length;
-
-      res.send({ kids: kids.results, count });
-      return;
-    }
-
-    const skip = req.query.skip || 1000;
-    const kids = await executeQuery(
-      `SELECT * FROM registrant WHERE ID < ? LIMIT 20`,
-      [skip]
-    );
-
-    const kidCount = await executeQuery(
-      `SELECT COUNT(ID) as count FROM registrant`,
-      [skip]
-    );
-
-    const count = kidCount.results[0]?.count;
-
-    res.send({ kids: kids.results, count });
-    return;
+    res.sendFile(join(pub, "admin", "user_home.html"));
   } catch (error) {
     console.log(error);
-    return `the following error ocurred ${error}`;
   }
+  // const userId = Object.keys(req.query)[0];
+  // console.log(userId);
+  // try {
+  //   // find a child by last name
+  //   if (req.query.ln) {
+  //     const kids = await executeQuery(
+  //       `SELECT * FROM registrant WHERE ID =  ?`,
+  //       [userId]
+  //     );
+
+  //     const count = kids.results.length;
+
+  //     res.send({ kids: kids.results, count });
+  //     return;
+  //   }
+
+  //   const skip = req.query.skip || 1000;
+  //   const kids = await executeQuery(
+  //     `SELECT * FROM registrant WHERE ID < ? LIMIT 20`,
+  //     [skip]
+  //   );
+
+  //   const kidCount = await executeQuery(
+  //     `SELECT COUNT(ID) as count FROM registrant`,
+  //     [skip]
+  //   );
+
+  //   const count = kidCount.results[0]?.count;
+
+  //   res.send({ kids: kids.results, count });
+  //   return;
+  // } catch (error) {
+  //   console.log(error);
+  //   return `the following error ocurred ${error}`;
+  // }
 });
 
 export default router;
