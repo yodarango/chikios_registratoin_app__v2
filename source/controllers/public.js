@@ -50,4 +50,42 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// repeated as the admin route but with a different route because I messed up the codes
+// get all the users
+router.get("/home/users", authenticateToken, async (req, res) => {
+  try {
+    // find a child by last name
+    if (req.query.ln) {
+      const kids = await executeQuery(
+        `SELECT * FROM registrant WHERE last_name LIKE ?`,
+        [`%${req.query.ln}%`]
+      );
+
+      const count = kids.results.length;
+
+      res.send({ kids: kids.results, count });
+      return;
+    }
+
+    const skip = req.query.skip || 1000;
+    const kids = await executeQuery(
+      `SELECT * FROM registrant WHERE ID < ? LIMIT 20`,
+      [skip]
+    );
+
+    const kidCount = await executeQuery(
+      `SELECT COUNT(ID) as count FROM registrant`,
+      [skip]
+    );
+
+    const count = kidCount.results[0]?.count;
+
+    res.send({ kids: kids.results, count });
+    return;
+  } catch (error) {
+    console.log(error);
+    return `the following error ocurred ${error}`;
+  }
+});
+
 export default router;
