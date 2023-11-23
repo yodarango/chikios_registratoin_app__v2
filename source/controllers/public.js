@@ -14,6 +14,7 @@ const pub = join(__dirname, "..", "..", "public");
 
 // middleware
 import { generateAccessToken } from "../helpers/auth/sign_new_token.js";
+import { authenticateToken } from "../helpers/auth/authenticate_token.js";
 
 // register
 router.get("/", async (req, res) => {
