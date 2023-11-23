@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
 
 // repeated as the admin route but with a different route because I messed up the codes
 // get all the users
-router.get("/home/users", authenticateToken, async (req, res) => {
+router.get("/home/users", async (req, res) => {
   try {
     // find a child by last name
     if (req.query.ln) {

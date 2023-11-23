@@ -109,7 +109,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.put("/check-in/:id", authenticateToken, async (req, res) => {
+router.put("/check-in/:id", async (req, res) => {
   try {
     // get the child ID and insert the parent now
     const checkIn = await executeQuery(
@@ -140,7 +140,7 @@ router.put("/check-in/:id", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/check-out/:id", authenticateToken, async (req, res) => {
+router.put("/check-out/:id", async (req, res) => {
   try {
     // get the child ID and insert the parent now
     const checkOut = await executeQuery(

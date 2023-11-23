@@ -24,7 +24,7 @@ router.get("/user", (req, res) => {
 });
 
 // get all the users
-router.get("/users", authenticateToken, async (req, res) => {
+router.get("/users", async (req, res) => {
   try {
     // find a child by last name
     if (req.query.ln) {
@@ -61,7 +61,7 @@ router.get("/users", authenticateToken, async (req, res) => {
 });
 
 // get the registrant's info as well as the child info
-router.get("/kid/:id", authenticateToken, async (req, res) => {
+router.get("/kid/:id", async (req, res) => {
   try {
     if (req.params.id) {
       const kids = await executeQuery(
@@ -83,7 +83,7 @@ router.get("/kid/:id", authenticateToken, async (req, res) => {
   }
 });
 
-router.delete("/kid/delete/:id", authenticateToken, async (req, res) => {
+router.delete("/kid/delete/:id", async (req, res) => {
   try {
     const kids = await executeQuery(
       `
