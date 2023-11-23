@@ -19,6 +19,7 @@ router.use(express.urlencoded({ extended: true }));
 // models
 import { currTime } from "../helpers/temp/current_time.js";
 import { executeQuery } from "../db/connection.js";
+import { calculateBase64SizeInMB } from "../../utils/calculateBase64Size.js";
 
 router.use(cors());
 
@@ -26,13 +27,23 @@ router.use(cors());
 router.post("/upload-photo", async (req, res) => {
   const timestamp = Date.now();
   const filename = `${timestamp}.png`;
-
-  console.log("writing photo to disk...");
+  console.log(
+    "-------------------------------------------------------- \n",
+    "POST: /upload-photo \n",
+    "-------------------------------------------------------- \n"
+  );
+  console.log("📝 writing photo to disk");
   async function savePhoto(base64) {
     try {
       const split = base64.split(",");
       const mimetype = split[0].split(":")[1].split(";")[0];
       const buffer = Buffer.from(split[1], "base64");
+
+      console.log("mimetype...................", mimetype);
+      console.log(
+        "size in MB.....................",
+        calculateBase64SizeInMB(base64)
+      );
 
       await fsPromises.mkdir(photosDir, { recursive: true });
 
@@ -41,9 +52,12 @@ router.post("/upload-photo", async (req, res) => {
 
       await fsPromises.writeFile(path, buffer);
 
-      res.send({ path: `${filename}`, status: 200 });
+      console.log("✅ Successfully wrote photo to disk!");
+      console.log("image path.....................", `${filename}`);
+
+      return res.send({ path: `${filename}`, status: 200 });
     } catch (error) {
-      console.log(error);
+      console.log("error saving photo", error);
       res.send({ error: "error uploading photo", status: 500 });
     }
   }
@@ -53,6 +67,13 @@ router.post("/upload-photo", async (req, res) => {
 
 // register the child
 router.post("/register", async (req, res, next) => {
+  console.log(
+    "-------------------------------------------------------- \n",
+    "POST: /register \n",
+    "-------------------------------------------------------- \n"
+  );
+  console.log("📝 registering child");
+  console.log("payload.....................", req.body);
   const {
     guardian_phone_number: g_phone_number,
     guardian_first_name: g_first_name,
@@ -81,6 +102,10 @@ router.post("/register", async (req, res, next) => {
       return;
     }
 
+    console.log("✅ Successfully registered child!");
+    console.log("child id.....................", insertKid.results.insertId);
+    console.log("📝 Writing guardian");
+
     // get the child ID and insert the parent now
     const insertParent = await executeQuery(
       `INSERT INTO guardian (first_name, last_name, phone_number, registrant_id)
@@ -97,18 +122,28 @@ router.post("/register", async (req, res, next) => {
       return;
     }
 
-    res.send({
+    console.log("✅ Successfully registered guardian!");
+
+    return res.send({
       success: "child successfully registered",
       id: insertKid.results.insertId,
     });
   } catch (error) {
-    console.log(error);
+    console.log("error registering child and guardian", error);
     res.send({ error, id: null });
     return `the following error ocurred ${error}`;
   }
 });
 
 router.put("/check-in/:id", async (req, res) => {
+  console.log(
+    "-------------------------------------------------------- \n",
+    "PUT: /check-in/" + req.params.id + " \n",
+    "-------------------------------------------------------- \n"
+  );
+  console.log("📝 checking-in child");
+  console.log("payload.....................", req.body);
+
   try {
     // get the child ID and insert the parent now
     const checkIn = await executeQuery(
@@ -128,7 +163,11 @@ router.put("/check-in/:id", async (req, res) => {
 
       return;
     }
-    res.status(200).send({
+
+    console.log("✅ Successfully checked-in child!");
+    console.log("child id.....................", req.params.id);
+
+    return res.status(200).send({
       id: req.params.id,
       time: currTime(),
       status: 200,
@@ -140,6 +179,15 @@ router.put("/check-in/:id", async (req, res) => {
 });
 
 router.put("/check-out/:id", async (req, res) => {
+  console.log(
+    "-------------------------------------------------------- \n",
+    "PUT: /check-out/" + req.params.id + " \n",
+    "-------------------------------------------------------- \n"
+  );
+
+  console.log("📝 checking-out child");
+  console.log("payload.....................", req.body);
+
   try {
     // get the child ID and insert the parent now
     const checkOut = await executeQuery(
@@ -160,7 +208,8 @@ router.put("/check-out/:id", async (req, res) => {
       return;
     }
 
-    res.status(200).send({
+    console.log("✅ Successfully checked-out child!");
+    return res.status(200).send({
       id: req.params.id,
       time: currTime(),
       status: 200,

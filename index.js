@@ -21,7 +21,7 @@ app.set("view engine", "ejs");
 
 app.use(cookieParser());
 app.use(express.static("public"));
-app.use("/kids", authenticateToken, registrantControllers);
+app.use("/kids", registrantControllers);
 app.use("/admin", authenticateToken, adminControllers);
 app.use("/", mainControllers);
 

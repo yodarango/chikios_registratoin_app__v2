@@ -19,7 +19,12 @@ import { executeQuery } from "../db/connection.js";
 
 // register
 router.get("/", async (req, res) => {
-  res.sendFile(join(pub, "index.html"));
+  console.log(
+    "--------------------------------------------------------",
+    "GET: /",
+    "--------------------------------------------------------"
+  );
+  return res.sendFile(join(pub, "index.html"));
 });
 
 // login

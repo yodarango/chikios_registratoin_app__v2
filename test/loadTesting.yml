@@ -1,0 +1,18 @@
+config:
+  target: "http://localhost:3005"
+  phases:
+    - duration: 60 # Test duration in seconds
+      arrivalRate: 5 # Number of new virtual users per second
+  defaults:
+    headers:
+      Content-Type: "application/json" # Set Content-Type header for JSON payload
+
+scenarios:
+  - name: "Submit registration form"
+    flow:
+      - post:
+          url: "/register"
+          json:
+            name: "John"
+            last_name: "Doe"
+            image: "data:image/png;base64,iVBORw0K..." # Replace with actual base64-encoded image string
