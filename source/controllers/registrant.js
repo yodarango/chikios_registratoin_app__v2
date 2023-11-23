@@ -18,7 +18,6 @@ router.use(express.urlencoded({ extended: true }));
 
 // models
 import { currTime } from "../helpers/temp/current_time.js";
-import { authenticateToken } from "../helpers/auth/authenticate_token.js";
 import { executeQuery } from "../db/connection.js";
 
 router.use(cors());

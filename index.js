@@ -10,6 +10,7 @@ const app = express();
 import registrantControllers from "./source/controllers/registrant.js";
 import adminControllers from "./source/controllers/admin.js";
 import mainControllers from "./source/controllers/public.js";
+import { authenticateToken } from "./source/helpers/auth/authenticate_token.js";
 
 //middleware
 // app.set("view engine", "ejs");
@@ -20,8 +21,8 @@ app.set("view engine", "ejs");
 
 app.use(cookieParser());
 app.use(express.static("public"));
-app.use("/kids", registrantControllers);
-app.use("/admin", adminControllers);
+app.use("/kids", authenticateToken, registrantControllers);
+app.use("/admin", authenticateToken, adminControllers);
 app.use("/", mainControllers);
 
 app.listen(process.env.PORT, () => {
