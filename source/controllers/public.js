@@ -2,7 +2,7 @@
 import express from "express";
 const router = express.Router();
 
-router.use(express.json({ limit: "3mb" }));
+router.use(express.json({ limit: "5mb" }));
 router.use(express.urlencoded({ extended: false }));
 
 import { join } from "path";
