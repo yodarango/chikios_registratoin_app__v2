@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:3005"
+  target: "http://localhost:3003"
   phases:
     - duration: 60 # Test duration in seconds
       arrivalRate: 5 # Number of new virtual users per second
