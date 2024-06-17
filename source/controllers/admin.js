@@ -21,7 +21,7 @@ router.get(
     const registrant = new Registrant();
     const registrants = await registrant.getAllRegistrants();
 
-    res.render("admin/users", { registrants });
+    res.render("admin/registrants", { registrants });
   }
 );
 
