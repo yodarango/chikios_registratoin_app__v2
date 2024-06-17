@@ -51,32 +51,34 @@
           class="card-<%= registrant.id %>"
         >
           <div
-            class="d-flex align-items-center justify-content-start p-3 mx-0 mb-4 rounded-3 card"
+            class="d-flex align-items-center justify-content-start p-3 mb-4 mx-0 rounded-3 bg-gamma"
           >
-            <a href="/admin/registrant.html?registrant=<%= registrant.id %>">
-              <img
-                src="/photos/<%= registrant.profilePicture %>"
-                alt="avatar"
-                class="avatar d-block rounded-3 me-4 flex-nowrap"
-              />
+            <a
+              class="me-4 my-0 w-100 d-block"
+              href="/admin/registrant.html?registrant=<%= registrant.id %>"
+            >
+              <h3 class="p-4">
+                <%= registrant.firstName %> <%= registrant.lastName %>, <%=
+                registrant.age %>
+              </h3>
             </a>
-            <h3 class="me-4 my-0 w-100">
-              <%= registrant.firstName %> <%= registrant.lastName %>, <%=
-              registrant.age %>
-            </h3>
             <div
               class="flex-shrink-0 d-flex align-items-center justify-content-center"
             >
               <button
-                class="runded-circle d-block delete bg-warning me-4"
+                class="bg-nu p-0 m-0 color-warning me-4"
                 id="delete-<%= registrant.id %>"
                 onclick="handleDeleteRegistrant('<%= registrant.id %>')"
-              ></button>
+              >
+                <b>Delete</b>
+              </button>
               <button
-                onclick="handleCheckInOrOutRegistrant('<%= registrant.id %>', '<%= registrant.checkIn %>')"
-                id="<%= registrant.id %>"
-                class="<%= registrant.checkIn ? 'checked_in bg-success rounded-circle d-block flex-nowrap' : 'checked_out bg-danger rounded-circle nd-block flex-nowrap' %>"
-              ></button>
+                onclick="handleCheckInOrOutRegistrant('<%= registrant.id %>', '<%= !registrant.checkedIn %>')"
+                class="bg-nu py-0 px-2 m-0 <%= registrant.checkedIn ? ' color-success' : 'color-danger' %>"
+                id="check-status-<%= registrant.id %>"
+              >
+                <b><%= registrant.checkedIn ? 'IN' : 'OUT'%></b>
+              </button>
             </div>
           </div>
         </div>
@@ -114,38 +116,49 @@
     }
 
     async function handleCheckInOrOutRegistrant(id, status) {
-      const registrantId = document.getElementById(id);
-      registrantId.classList.remove("checked_out", "bgq-danger");
-      registrantId.classList.remove("checked_in", "bg-success");
-      registrantId.classList.add("d-none");
+      const isCheckIn = Boolean(status);
 
       if (!id) return;
 
-      const path =
-        `/kids/${
-          status == "false" || status == false ? "check-in" : "check-out"
-        }/` + id;
+      const registrantIdBtn = document.getElementById(`check-status-${id}`);
+
+      const registrantIdText = registrantIdBtn.querySelector(`b`);
+
+      registrantIdBtn.classList.remove("color-danger", "color-success");
+      registrantIdText.textContent = "Processing...";
+      registrantIdBtn.classList.add("color-rho");
+
+      const path = `/admin/${isCheckIn ? "check-in" : "check-out"}/` + id;
 
       try {
-        const req = await fetch(
-          path,
-
-          {
-            method: "PUT",
-          }
-        );
+        const req = await fetch(path, {
+          method: "PUT",
+        });
         const res = await req.json();
 
-        if (res.status === 200 && (status == "false" || status == false)) {
-          registrantId.classList.add("checked_in", "bg-success");
-          registrantId.setAttribute("onclick", `check("${id}", "true")`);
-          registrantId.classList.remove("d-none");
-          registrantId.classList.add("d-block");
-        } else if (res.status === 200 && (status == "true" || status == true)) {
-          registrantId.classList.add("checked_out", "bg-danger");
-          registrantId.setAttribute("onclick", `check("${id}", "false")`);
-          registrantId.classList.remove("d-none");
-          registrantId.classList.add("d-block");
+        if (!res.success) {
+          alert("An error occurred, please try again.");
+          return;
+        }
+
+        if (isCheckIn) {
+          registrantIdBtn.setAttribute(
+            "onclick",
+            `handleCheckInOrOutRegistrant("${id}", ${false})`
+          );
+          registrantIdBtn.classList.remove("d-none");
+          registrantIdText.textContent = "IN";
+
+          registrantIdBtn.classList.add("d-block", "color-success");
+        } else {
+          registrantIdBtn.setAttribute(
+            "onclick",
+            `handleCheckInOrOutRegistrant("${id}", ${true})`
+          );
+          registrantIdBtn.classList.remove("d-none");
+          registrantIdText.textContent = "OUT";
+
+          registrantIdBtn.classList.add("d-block", "color-danger");
         }
       } catch (error) {
         console.error(error);
@@ -154,22 +167,22 @@
 
     function handleDeleteRegistrant(id) {
       if (!id) return;
-      const registrantCard = document.getElementsByClassName(`card-${id}`)[0];
+      const registrantCard = document.querySelector(`.card-${id}`);
       const registrantId = document.getElementById(`delete-${id}`);
       registrantId.classList.add("d-none");
 
-      console.log(registrantCard);
-
-      const path = `/admin/kid/delete/${id}`;
+      const path = `/admin/delete/${id}`;
 
       const callDelete = async () => {
         try {
           const req = await fetch(path, {
             method: "DELETE",
           });
+
           const res = await req.json();
 
-          if (res.status === 200) {
+          if (res.success) {
+            console.log(res);
             registrantCard.remove();
           }
         } catch (error) {
@@ -183,15 +196,6 @@
         registrantId.classList.remove("d-none");
         registrantId.classList.add("d-block");
       }
-    }
-
-    function handleLoadMore() {
-      let count = document.querySelector(".load-more");
-      let search = document.getElementById("search");
-      search = search?.value ? `ln=${search.value}` : "";
-      count = count ? count.dataset.results : "0";
-
-      getregistrants(`fromid=${count}`, search, true);
     }
   </script>
 </html>

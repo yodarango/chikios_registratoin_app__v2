@@ -6,7 +6,7 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://cdn.danielrangel.net/utils.min.css"
+      href="https://cdn.danielrangel.net/fullds.min.css"
     />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/app.css" />
@@ -56,7 +56,7 @@
       </div>
       <button
         onclick="handleLogin()"
-        class="w-100 btn bg-quaternary d-block mt-5 color-primary"
+        class="w-100 btn bg-zeta d-block mt-5 color-primary"
       >
         Login
       </button>
@@ -72,16 +72,17 @@
         };
 
         try {
-          const req = await fetch("/login", {
+          const req = await fetch("/admin/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
           });
+
           const res = await req.json();
 
-          if (res.token) {
+          if (res?.token) {
             document.cookie = `authorization=${res.token}; expires=Thu, 18 Dec 2043 12:00:00 UTC; path=/`;
 
             window.location.href = "/admin";

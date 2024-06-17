@@ -9,8 +9,9 @@ import express from "express";
 const app = express();
 
 // controllers
+import { publicRouter, privateRouter } from "./source/controllers/admin.js";
+import { authenticateToken } from "./source/helpers/auth/authenticate_token.js";
 import indexControllers from "./source/controllers/index.js";
-import adminControllers from "./source/controllers/admin.js";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +29,9 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-app.use("/admin", adminControllers);
+app.use("/admin", publicRouter);
+
+app.use("/admin", authenticateToken, privateRouter);
 app.use("/", indexControllers);
 
 app.listen(process.env.PORT, () => {

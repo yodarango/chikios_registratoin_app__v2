@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.danielrangel.net/fullds.min.css"
+    />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <title>Registrant</title>
+  </head>
+  <body>
+    <main>
+      <section id="view">
+        <h3 class="mb-4 mx-0 fs-2">Child</h3>
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p
+              style="font-size: 16px"
+              class="chikios-paragraph me-3 flex-shrink-0 text-left"
+            >
+              First name:
+            </p>
+          </div>
+          <div class="w-100">
+            <input
+              class="form_input p-3 bg-info-subtle rounded-3 w-100"
+              value="<%=registrant.first_name%>"
+              placeholder="Enter first name"
+              type="text"
+              readonly
+              id="fn"
+            />
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p
+              style="font-size: 16px"
+              class="chikios-paragraph me-3 flex-shrink-0 text-left"
+            >
+              Last name:
+            </p>
+          </div>
+          <div class="w-100">
+            <input
+              type="text"
+              placeholder="Enter first name"
+              class="form_input p-3 bg-info-subtle rounded-3 w-100"
+              id="fn"
+              value="<%=registrant.last_name%>"
+              readonly
+            />
+          </div>
+        </div>
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p
+              style="font-size: 16px"
+              class="chikios-paragraph me-3 flex-shrink-0 text-left"
+            >
+              Age:
+            </p>
+          </div>
+          <div class="w-100">
+            <input
+              type="number"
+              placeholder="0"
+              class="form_input-number p-3 rounded-3"
+              id="age"
+              max="11"
+              min="4"
+              value="<%=registrant.age%>"
+              readonly
+            />
+          </div>
+        </div>
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p
+              style="font-size: 16px"
+              class="chikios-paragraph my-0 me-3 flex-shrink-0 text-left"
+            >
+              Gender:
+            </p>
+          </div>
+          <div class="w-100 d-flex align-items-center justify-content-start">
+            <button
+              id="<%=registrant.gender === 1 ? 'malebtn' : 'femalebtn'%>"
+              class="rounded-2 me-3 btn active"
+            >
+              M
+            </button>
+          </div>
+        </div>
+
+        <h3 class="mb-4 mx-0 fs-2">Guardian</h3>
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p
+              style="font-size: 16px"
+              class="chikios-paragraph me-3 flex-shrink-0 text-left"
+            >
+              First name:
+            </p>
+          </div>
+          <div class="w-100">
+            <input
+              type="text"
+              placeholder="Enter first name"
+              class="form_input p-3 bg-info-subtle rounded-3 w-100"
+              id="fn"
+              value="<%=registrant.guardian_first_name%>"
+              readonly
+            />
+          </div>
+        </div>
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p
+              style="font-size: 16px"
+              class="chikios-paragraph me-3 flex-shrink-0 text-left"
+            >
+              Last name:
+            </p>
+          </div>
+          <div class="w-100">
+            <input
+              type="text"
+              placeholder="Enter first name"
+              class="form_input p-3 bg-info-subtle rounded-3 w-100"
+              id="fn"
+              value="<%=registrant.guardian_last_name%>"
+              readonly
+            />
+          </div>
+        </div>
+        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
+          <div style="min-width: 100px">
+            <p s="" class="chikios-paragraph me-3 flex-shrink-0 text-left">
+              Phone #:
+            </p>
+          </div>
+          <div class="w-100">
+            <input
+              type="text"
+              placeholder="Enter phone number"
+              class="form_input p-3 rounded-3 w-100"
+              id="gphone"
+              readonly
+              value="<%=registrant.guardian_phone_number%>"
+            />
+          </div>
+        </div>
+      </section>
+      <button
+        id="check-status"
+        onclick="handleCheckInOrOutRegistrant('<%=registrant.id%>', '<%=registrant.checkedIn%>')"
+        class="w-100 btn p-3 d-flex align-items-center justify-content-center mb-5 <%= !registrant.checkedIn ? 'bg-danger' : 'bg-success' %>"
+      >
+        <b class="fw-bold me-4"
+          ><%= !registrant.checkedIn ? 'Checked out' : 'Checked in'%></b
+        >
+      </button>
+    </main>
+
+    <!-- check status -->
+    <script>
+      async function handleCheckInOrOutRegistrant(id, status) {
+        const isCheckIn = Boolean(status);
+        const canContinue = validateInputs();
+
+        if (!id || !canContinue) return;
+
+        const registrantIdBtn = document.getElementById(`check-status`);
+
+        const registrantIdText = registrantIdBtn.querySelector(`b`);
+
+        registrantIdBtn.classList.remove(
+          "bg-danger",
+          "bg-success",
+          "font-gamma"
+        );
+        registrantIdText.textContent = "Processing...";
+        registrantIdBtn.classList.add("bg-rho");
+
+        const path = `/admin/${isCheckIn ? "check-in" : "check-out"}/` + id;
+
+        try {
+          const req = await fetch(path, {
+            method: "PUT",
+          });
+          const res = await req.json();
+
+          if (!res.success) {
+            alert("An error occurred, please try again.");
+            return;
+          }
+
+          if (isCheckIn) {
+            registrantIdBtn.setAttribute(
+              "onclick",
+              `handleCheckInOrOutRegistrant(${id}, ${false})`
+            );
+            registrantIdBtn.classList.remove("d-none");
+            registrantIdText.textContent = "Checked in";
+
+            registrantIdBtn.classList.add(
+              "color-gamma",
+              "bg-success",
+              "d-block"
+            );
+          } else {
+            registrantIdBtn.setAttribute(
+              "onclick",
+              `handleCheckInOrOutRegistrant(${id}, ${true})`
+            );
+            registrantIdBtn.classList.remove("d-none", "color-gamma");
+            registrantIdText.textContent = "Checked out";
+
+            registrantIdBtn.classList.add(
+              "d-block",
+              "bg-danger",
+              "color-alpha"
+            );
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      // i get the inputs and return them in an abject
+      function getInputs() {
+        const phone_number = document.getElementById("gphone").value;
+        const guardian_fn = document.getElementById("gfn").value;
+        const guardian_ln = document.getElementById("gln").value;
+        const ageString = document.getElementById("age").value;
+        const first_name = document.getElementById("fn").value;
+        const gender = document.getElementById("gender").value;
+        const last_name = document.getElementById("ln").value;
+        const age = Number(ageString || "1");
+
+        return {
+          phone_number,
+          guardian_ln,
+          guardian_fn,
+          first_name,
+          last_name,
+          gender,
+          age,
+        };
+      }
+
+      // I validate the inputs to make sure they are not empty
+      // and agree with the required parameters
+      function validateInputs() {
+        const {
+          phone_number,
+          guardian_ln,
+          guardian_fn,
+          first_name,
+          last_name,
+          gender,
+          age,
+        } = getInputs();
+
+        // Check if any of the required fields are empty or equal to zero
+        if (!first_name || !last_name) {
+          alert("Name and last name of the child are required!");
+          return false;
+        }
+
+        if (!(age > 3) || !(age < 12)) {
+          alert("Age ranges are 4 - 11");
+          return false;
+        }
+
+        if (!(gender > 0)) {
+          alert("Please enter the gender");
+          return false;
+        }
+
+        if (!guardian_fn || !guardian_ln) {
+          alert("Guardian first and last name required ");
+          return false;
+        }
+
+        if (!phone_number) {
+          alert("Guardian phone number is required");
+          return false;
+        }
+
+        return true;
+      }
+    </script>
+  </body>
+</html>

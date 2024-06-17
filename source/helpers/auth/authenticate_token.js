@@ -8,7 +8,7 @@ export const authenticateToken = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       console.log(err);
-      return res.sendStatus(403);
+      return res.render("admin/login");
     }
 
     req.user = user;

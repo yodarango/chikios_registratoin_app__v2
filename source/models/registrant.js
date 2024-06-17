@@ -6,7 +6,7 @@ export function Registrant() {
   this.guardianPhoneNumber = "";
   this.guardianFirstName = "";
   this.guardianLastName = "";
-  this.checkIn = false;
+  this.checkedIn = false;
   this.age = undefined;
   this.id = undefined;
   this.firstName = "";
@@ -19,11 +19,25 @@ export function Registrant() {
     // return results;
 
     return [
-      { id: 1, firstName: "John", lastName: "Doe", gender: 1 },
-      { id: 2, firstName: "Jane", lastName: "Une", gender: 2 },
-      { id: 3, firstName: "Jim", lastName: "three", gender: 1 },
-      { id: 4, firstName: "Jill", lastName: "thims", gende: 2 },
+      { id: 1, firstName: "John", lastName: "Doe", gender: 1, checkIn: false },
+      { id: 2, firstName: "Jane", lastName: "Une", gender: 2, checkIn: true },
+      { id: 3, firstName: "Jim", lastName: "three", gender: 1, checkIn: false },
+      { id: 4, firstName: "Jill", lastName: "thims", gende: 2, checkIn: true },
     ];
+  };
+
+  this.getSingleRegistrantById = async function () {
+    // const { results } = await executeQuery("SELECT * FROM registrant WHERE id = ?", [
+    //   this.id,
+    // ]);
+    // return results;
+
+    return {
+      id: 1,
+      firstName: "John",
+      lastName: "Doe",
+      checkedIn: false,
+    };
   };
 
   this.newRegistrantFromRequestBody = function (body) {
@@ -31,7 +45,7 @@ export function Registrant() {
     this.guardianFirstName = body.guardian_first_name;
     this.guardianLastName = body.guardian_last_name;
     this.firstName = body.first_name;
-    this.checkIn = body.checked_in;
+    this.checkedIn = body.checked_in;
     this.lastName = body.last_name;
     this.checkIn = false;
     this.age = body.age;
@@ -55,8 +69,33 @@ export function Registrant() {
     return { newRegistrantId: 1, success: true };
   };
 
-  this.setLastCheckTime = function (lastCheckTime) {
-    this.lastCheckTime = lastCheckTime;
+  this.checkIn = async function () {
+    // const { results } = await executeQuery(
+    //   "UPDATE registrant SET checked_in = ? WHERE id = ?",
+    //   [this.checkIn, this.id]
+    // );
+    // return results;
+
+    return { success: true };
+  };
+
+  this.checkOut = async function () {
+    // const { results } = await executeQuery(
+    //   "UPDATE registrant SET checked_in = ? WHERE id = ?",
+    //   [this.checkIn, this.id]
+    // );
+    // return results;
+
+    return { success: true };
+  };
+
+  this.deleteRegistrant = async function () {
+    // const { results } = await executeQuery("DELETE FROM registrant WHERE id = ?", [
+    //   this.id,
+    // ]);
+    // return results;
+
+    return { success: true };
   };
 
   return this;
