@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.danielrangel.net/fullds.min.css"
+    />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <!-- <script
+      type="text/javascript"
+      src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"
+    ></script> -->
+
+    <title>Success | Child registered successfully</title>
+  </head>
+  <body onload="replaceDOMElementsWithValues()">
+    <main class="pt-5">
+      <h1 class="w-100 text-center color-success">
+        Registration successful 🎉
+      </h1>
+      <h3 id="registrant-name-34jskw" class="mt-4 pt-4 text-center"></h3>
+      <p class="mt-3 mb-6 m-auto text-center">
+        Please take a pictureor take note of this code. You will show this when
+        you come to pickup your child.
+      </p>
+      <div id="code-container" class="m-4">
+        <p class="mb-4 text-color text-center"></p>
+        <h1 class="registrant-save-code text-center p-4"></h1>
+      </div>
+
+      <p class="text-center">
+        <b class="color-warning">Dont' share this code with anyone</b>
+      </p>
+
+      <button class="bg-info w-100 m-0 color-gamma" onclick="handleDone()">
+        Im done. Hide the code!
+      </button>
+    </main>
+
+    <script>
+      function replaceDOMElementsWithValues() {
+        const queryParams = new URLSearchParams(location.search);
+        const registrantName = queryParams.get("firstName");
+        const registrantId = queryParams.get("id");
+
+        const codeContainer = document.querySelector("#code-container");
+        const codeText = codeContainer.querySelector("p");
+        const code = codeContainer.querySelector("h1");
+
+        codeText.textContent = "The code for " + registrantName + " is:";
+        code.textContent = registrantId;
+      }
+
+      function handleDone() {
+        if (confirm("Please don't forget your number.")) {
+          location.href = "/";
+        }
+      }
+    </script>
+  </body>
+</html>

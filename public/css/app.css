@@ -1,7 +1,3 @@
-body {
-  background-color: var(--);
-}
-
 .thumbnail {
   object-position: center;
   border-radius: 1em;
@@ -75,12 +71,6 @@ body {
   width: 12rem;
 }
 
-.btn.primary {
-  background-color: #00d1ff !important;
-  border: none;
-  color: white !important;
-}
-
 #malebtn,
 #femalebtn {
   background-color: #272348 !important;
@@ -92,16 +82,6 @@ body {
   align-items: center;
   justify-content: center;
   border: none;
-}
-
-.bg-success {
-  background-color: #6af548 !important;
-  color: #272348;
-}
-
-.bg-warning {
-  background-color: #f5f548 !important;
-  color: #272348;
 }
 
 #malebtn.active {
@@ -166,4 +146,15 @@ main {
   width: 90%;
   max-width: 500px;
   margin: auto;
+}
+
+button:disabled {
+  background-color: var(--dr-gamma) !important;
+  color: rgba(var(--dr-alpha-rgb), 0.5) !important;
+}
+
+.registrant-save-code {
+  border: 0.5rem solid var(--dr-alpha);
+  border-radius: 1rem;
+  font-size: 10rem;
 }

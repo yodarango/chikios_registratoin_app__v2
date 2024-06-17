@@ -3,7 +3,9 @@ import { executeQuery } from "../db/executeQuery.js";
 export function Registrant() {
   this.lastCheckTime = new Date();
   this.createdDate = new Date();
-  this.profilePicture = "";
+  this.guardianPhoneNumber = "";
+  this.guardianFirstName = "";
+  this.guardianLastName = "";
   this.checkIn = false;
   this.age = undefined;
   this.id = undefined;
@@ -22,6 +24,35 @@ export function Registrant() {
       { id: 3, firstName: "Jim", lastName: "three", gender: 1 },
       { id: 4, firstName: "Jill", lastName: "thims", gende: 2 },
     ];
+  };
+
+  this.newRegistrantFromRequestBody = function (body) {
+    this.guardianPhoneNumber = body.guardian_phone_number;
+    this.guardianFirstName = body.guardian_first_name;
+    this.guardianLastName = body.guardian_last_name;
+    this.firstName = body.first_name;
+    this.checkIn = body.checked_in;
+    this.lastName = body.last_name;
+    this.checkIn = false;
+    this.age = body.age;
+  };
+
+  this.save = async function () {
+    // const { results } = await executeQuery(
+    //   "INSERT INTO registrant (guardian_phone_number, guardian_first_name, guardian_last_name, first_name, last_name, checked_in, age) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    //   [
+    //     this.guardianPhoneNumber,
+    //     this.guardianFirstName,
+    //     this.guardianLastName,
+    //     this.firstName,
+    //     this.lastName,
+    //     this.checkIn,
+    //     this.age,
+    //   ]
+    // );
+    // return results;
+
+    return { newRegistrantId: 1, success: true };
   };
 
   this.setLastCheckTime = function (lastCheckTime) {

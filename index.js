@@ -9,10 +9,8 @@ import express from "express";
 const app = express();
 
 // controllers
-// import registrantControllers from "./source/controllers/registrant.js";
-// import adminControllers from "./source/controllers/admin.js";
+import indexControllers from "./source/controllers/index.js";
 import adminControllers from "./source/controllers/admin.js";
-import { authenticateToken } from "./source/helpers/auth/authenticate_token.js";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -30,9 +28,8 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-// app.use("/registrant", registrantControllers);
-// app.use("/guardian", adminControllers);
-app.use("/", adminControllers);
+app.use("/admin", adminControllers);
+app.use("/", indexControllers);
 
 app.listen(process.env.PORT, () => {
   console.log(`listening on port ${process.env.PORT}`);

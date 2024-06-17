@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.danielrangel.net/fullds.min.css"
+    />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+
+    <title>Shrood | Chikios</title>
+  </head>
+  <body>
+    <main>
+      <div class="pt-5">
+        <h1 class="mb-3">Register</h1>
+        <h3 class="mb-3 mx-0d mt-0">Child info</h3>
+
+        <section id="form-data">
+          <input type="text" id="img-url" hidden />
+          <div class="mb-5">
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p
+                  style="font-size: 16px"
+                  class="chikios-paragraph me-3 flex-shrink-0 text-left"
+                >
+                  First name:
+                </p>
+              </div>
+              <div class="w-100">
+                <input
+                  type="text"
+                  placeholder="Enter first name"
+                  class="form_input p-3 bg-info-subtle rounded-3 w-100"
+                  id="fn"
+                />
+                <div
+                  data-lastpass-icon-root="true"
+                  style="
+                    position: relative !important;
+                    height: 0px !important;
+                    width: 0px !important;
+                    float: left !important;
+                  "
+                ></div>
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p
+                  style="font-size: 16px"
+                  class="chikios-paragraph me-3 flex-shrink-0 text-left"
+                >
+                  Last name:
+                </p>
+              </div>
+              <div class="w-100">
+                <input
+                  type="text"
+                  placeholder="Enter last name"
+                  class="form_input p-3 rounded-3 w-100"
+                  id="ln"
+                />
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p
+                  style="font-size: 16px"
+                  class="chikios-paragraph me-3 flex-shrink-0 text-left"
+                >
+                  Age:
+                </p>
+              </div>
+              <div class="w-100">
+                <input
+                  type="number"
+                  placeholder="0"
+                  class="form_input-number p-3 rounded-3"
+                  id="age"
+                  max="11"
+                  min="4"
+                />
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p
+                  style="font-size: 16px"
+                  class="chikios-paragraph my-0 me-3 flex-shrink-0 text-left"
+                >
+                  Gender:
+                </p>
+              </div>
+              <div
+                class="w-100 d-flex align-items-center justify-content-start"
+              >
+                <input
+                  type="number"
+                  id="gender"
+                  name="gender"
+                  value="0"
+                  hidden
+                />
+
+                <button
+                  id="malebtn"
+                  onclick="handleGender(1, 'malebtn')"
+                  class="rounded-2 me-3"
+                >
+                  M
+                </button>
+                <button
+                  id="femalebtn"
+                  onclick="handleGender(2, 'femalebtn')"
+                  class="rounded-2"
+                >
+                  F
+                </button>
+              </div>
+            </div>
+          </div>
+          <h3 class="mb-3 mx-0d mt-0">Guardian</h3>
+          <div class="mb-5">
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p class="chikios-paragraph me-3 flex-shrink-0 text-left">
+                  First name:
+                </p>
+              </div>
+              <div class="w-100">
+                <input
+                  type="text"
+                  placeholder="Enter first name"
+                  class="form_input p-3 rounded-3 w-100"
+                  id="gfn"
+                />
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p class="chikios-paragraph me-3 flex-shrink-0 text-left">
+                  Last name:
+                </p>
+              </div>
+              <div class="w-100">
+                <input
+                  type="text"
+                  placeholder="Enter last name"
+                  class="form_input p-3 rounded-3 w-100"
+                  id="gln"
+                />
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+            >
+              <div style="min-width: 100px">
+                <p s class="chikios-paragraph me-3 flex-shrink-0 text-left">
+                  Phone #:
+                </p>
+              </div>
+              <div class="w-100">
+                <input
+                  placeholder="Enter phone number"
+                  class="form_input p-3 rounded-3 w-100"
+                  id="gphone"
+                />
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-start justify-content-center flex-nowrap mb-4"
+            >
+              <p
+                style="min-width: 100px"
+                class="chikios-paragraph mb-2 text-left"
+              >
+                Notes:
+              </p>
+              <textarea
+                placeholder="Is there anything we should know about your child?"
+                rows="3"
+                class="form_textarea d-block bg-secondary p-3 rounded-3 color-tertiary w-100"
+              ></textarea>
+            </div>
+          </div>
+          <button
+            class="rounded-1 w-100 bg-info color-beta"
+            id="register-btn"
+            onclick="handleRegister()"
+          >
+            <span>Register</span>
+          </button>
+        </section>
+      </div>
+    </main>
+    <div style="width: 100%; height: 5rem"></div>
+
+    <script>
+      async function handleRegister(event) {
+        const {
+          phone_number,
+          guardian_ln,
+          guardian_fn,
+          first_name,
+          last_name,
+          gender,
+          age,
+        } = getInputs();
+
+        const canContinue = validateInputs();
+
+        // Create JSON body
+        const body = JSON.stringify({
+          guardian_phone_number: phone_number,
+          guardian_first_name: guardian_fn,
+          guardian_last_name: guardian_ln,
+          checked_in: 0,
+          first_name,
+          last_name,
+          gender,
+          age,
+        });
+
+        if (!canContinue) {
+          return;
+        }
+
+        handleLoadingState(true);
+
+        // Send POST request using fetch
+        try {
+          const req = await fetch("/admin/new", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body,
+          });
+          const res = await req.json();
+
+          if (res?.success) {
+            const query = `id=${res.newRegistrantId}&firstName=${first_name}&lastName${last_name}`;
+
+            const router = `/success?${query}`;
+            location.href = router;
+          } else {
+            alert("Something went wrong, please try again!");
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      // i get the inputs and return them in an abject
+      function getInputs() {
+        const phone_number = document.getElementById("gphone").value;
+        const guardian_fn = document.getElementById("gfn").value;
+        const guardian_ln = document.getElementById("gln").value;
+        const ageString = document.getElementById("age").value;
+        const first_name = document.getElementById("fn").value;
+        const gender = document.getElementById("gender").value;
+        const last_name = document.getElementById("ln").value;
+        const age = Number(ageString || "1");
+
+        return {
+          phone_number,
+          guardian_ln,
+          guardian_fn,
+          first_name,
+          last_name,
+          gender,
+          age,
+        };
+      }
+
+      // I validate the inputs to make sure they are not empty
+      // and agree with the required parameters
+      function validateInputs() {
+        const {
+          phone_number,
+          guardian_ln,
+          guardian_fn,
+          first_name,
+          last_name,
+          gender,
+          age,
+        } = getInputs();
+
+        // Check if any of the required fields are empty or equal to zero
+        if (!first_name || !last_name) {
+          alert("Name and last name of the child are required!");
+          return false;
+        }
+
+        if (!(age > 3) || !(age < 12)) {
+          alert("Age ranges are 4 - 11");
+          return false;
+        }
+
+        if (!(gender > 0)) {
+          alert("Please enter the gender");
+          return false;
+        }
+
+        if (!guardian_fn || !guardian_ln) {
+          alert("Guardian first and last name required ");
+          return false;
+        }
+
+        if (!phone_number) {
+          alert("Guardian phone number is required");
+          return false;
+        }
+
+        return true;
+      }
+
+      // handles styles for selecting the gender btn.
+      function handleGender(value, gender) {
+        const radioInput = document.getElementById("gender");
+        const buttonContainer = document.getElementById(gender);
+
+        const buttonMale = document.querySelector("#malebtn");
+        const buttonFemale = document.querySelector("#femalebtn");
+
+        buttonMale.classList.remove("active");
+        buttonFemale.classList.remove("active");
+
+        buttonContainer.classList.add("active");
+
+        radioInput.value = value;
+      }
+
+      // handles the loading state for button
+      function handleLoadingState(isLoading) {
+        const button = document.querySelector("#register-btn");
+        button.innerHTML = isLoading ? "Loading..." : "Register";
+        button.disabled = isLoading;
+      }
+    </script>
+  </body>
+</html>

@@ -7,7 +7,7 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="https://cdn.danielrangel.net/utils.min.css"
+      href="https://cdn.danielrangel.net/fullds.min.css"
     />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/app.css" />
@@ -51,7 +51,7 @@
           class="card-<%= registrant.id %>"
         >
           <div
-            class="d-flex align-items-center justify-content-start p3 mx-0 mb-4 rounded-3 card"
+            class="d-flex align-items-center justify-content-start p-3 mx-0 mb-4 rounded-3 card"
           >
             <a href="/admin/registrant.html?registrant=<%= registrant.id %>">
               <img
@@ -82,15 +82,6 @@
         </div>
         <% }) %>
       </div>
-
-      <h3 id="loading-34dsf" style="display: none">Loading 😃...</h3>
-      <button
-        data-results="0"
-        class="w-100 bg-quaternary color-primary load-more my-5"
-        onclick="handleLoadMore()"
-      >
-        More results
-      </button>
     </main>
   </body>
 
