@@ -5,6 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "pm2": "pm2 start --name=chikios index.js --watch",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
