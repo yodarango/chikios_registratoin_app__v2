@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "pm2 start --name=chikios_shrood_app index.js --watch"
+    "start": "node index.js"
   },
   "author": "Daniel Rangel",
   "license": "ISC",

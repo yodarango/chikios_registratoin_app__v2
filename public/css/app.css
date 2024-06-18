@@ -114,9 +114,7 @@ body {
 }
 
 .card {
-  background-color: var(--dr-secondary) !important;
-  color: white !important;
-  padding: 1.6rem;
+  overflow: hidden;
 }
 
 .checked_out,
@@ -157,4 +155,8 @@ button:disabled {
   border: 0.5rem solid var(--dr-alpha);
   border-radius: 1rem;
   font-size: 10rem;
+}
+
+button {
+  border-radius: 0;
 }

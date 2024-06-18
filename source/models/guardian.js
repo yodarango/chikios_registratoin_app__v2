@@ -1,26 +1,25 @@
 import { executeQuery } from "../db/executeQuery.js";
 
 export function Guardian() {
+  this.registrant_id = undefined;
   this.phone_number = undefined;
   this.first_name = "";
   this.last_name = "";
   this.id = 0;
 
-  this.add = function () {
-    // const { results } = await executeQuery(
-    //   "INSERT INTO registrant (guardian_phone_number, guardian_first_name, guardian_last_name, first_name, last_name, checked_in, age) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    //   [
-    //     this.guardianPhoneNumber,
-    //     this.guardianFirstName,
-    //     this.guardianLastName,
-    //     this.firstName,
-    //     this.lastName,
-    //     this.checkIn,
-    //     this.age,
-    //   ]
-    // );
-    // return results;
+  this.newGuardianFromRequestBody = function (body) {
+    this.phone_number = body.guardian_phone_number;
+    this.first_name = body.guardian_first_name;
+    this.last_name = body.guardian_last_name;
+  };
 
-    return { success: true };
+  this.save = async function () {
+    const { results } = await executeQuery(
+      `INSERT INTO guardian (registrant_id, phone_number, first_name, last_name)
+      VALUES (?, ?, ?, ?)`,
+      [this.registrant_id, this.phone_number, this.first_name, this.last_name]
+    );
+
+    return { results, success: true };
   };
 }

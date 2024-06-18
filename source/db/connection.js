@@ -4,6 +4,7 @@ dotenv.config();
 // production
 
 const connectionParams = {
+  password: process.env.MYSQL_DB_PASSWORD,
   database: process.env.MYSQL_DATABASE,
   user: process.env.MYSQL_DB_USER,
   host: process.env.MYSQL_HOST,

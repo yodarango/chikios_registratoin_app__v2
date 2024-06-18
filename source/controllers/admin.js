@@ -5,6 +5,7 @@ const privateRouter = express.Router();
 
 import { generateAccessToken } from "../helpers/auth/sign_new_token.js";
 import { Registrant } from "../models/registrant.js";
+import { Guardian } from "../models/guardian.js";
 
 publicRouter.get("/login", async (req, res) => {
   res.status(200).render("admin/login");
@@ -30,11 +31,36 @@ publicRouter.post("/login", async (req, res) => {
       res.send({ token });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.send({ error: "wrong pass" });
   }
 });
 
+// creates a new registrant
+publicRouter.post("/new", async (req, res) => {
+  try {
+    const registrant = new Registrant();
+    const guardian = new Guardian();
+
+    registrant.newRegistrantFromRequestBody(req.body);
+    guardian.newGuardianFromRequestBody(req.body);
+
+    const { newRegistrantId, success: registrantSuccess } =
+      await registrant.save();
+
+    guardian.registrant_id = newRegistrantId;
+
+    if (!registrantSuccess) {
+      res.status(500).json({ success: false });
+    }
+
+    const { success } = await guardian.save();
+
+    res.status(200).json({ newRegistrantId, success });
+  } catch (error) {
+    console.error(error);
+  }
+});
 // gets all registrants
 privateRouter.get("/", async (req, res) => {
   const registrant = new Registrant();
@@ -46,43 +72,36 @@ privateRouter.get("/", async (req, res) => {
 // gets registrant by id
 privateRouter.get("/:id", async (req, res) => {
   const registrant = new Registrant();
+
+  registrant.id = req.params.id;
+
   const singleRegistrant = await registrant.getSingleRegistrantById();
 
   res.status(200).render("admin/[id]", { registrant: singleRegistrant });
 });
 
-// creates a new registrant
-privateRouter.post("/new", async (req, res) => {
-  const registrant = new Registrant();
-
-  registrant.newRegistrantFromRequestBody(req.body);
-  const { newRegistrantId, success } = await registrant.add();
-
-  setTimeout(() => {
-    res.status(200).json({ newRegistrantId, success });
-  }, 15000);
-});
-
 // checks out a registrant
-privateRouter.put("/check-out/:id", async (req, res) => {
+privateRouter.post("/check-out/:id", async (req, res) => {
   const registrant = new Registrant();
 
-  registrant.checkIn = req.body.checkIn;
+  registrant.id = req.params.id;
+  registrant.checkedIn = false;
 
-  const { newRegistrantId, success } = await registrant.checkOut();
+  const { success } = await registrant.checkOut();
 
-  res.status(200).json({ newRegistrantId, success });
+  res.status(200).json({ success });
 });
 
 // checks in a registrant
-privateRouter.put("/check-in/:id", async (req, res) => {
+privateRouter.post("/check-in/:id", async (req, res) => {
   const registrant = new Registrant();
 
-  registrant.checkedIn = req.body.checkIn;
+  registrant.id = req.params.id;
+  registrant.checkedIn = true;
 
-  const { newRegistrantId, success } = await registrant.checkIn();
+  const { success } = await registrant.checkIn();
 
-  res.status(200).json({ newRegistrantId, success });
+  res.status(200).json({ success });
 });
 
 // deletes a registrant
@@ -91,9 +110,9 @@ privateRouter.delete("/delete/:id", async (req, res) => {
 
   registrant.id = req.params.id;
 
-  const { newRegistrantId, success } = await registrant.checkIn();
+  const { success } = await registrant.checkIn();
 
-  res.status(200).json({ newRegistrantId, success });
+  res.status(200).json({ success });
 });
 
 export { publicRouter, privateRouter };

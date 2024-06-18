@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.danielrangel.net/fullds.min.css"
-    />
+    <link rel="stylesheet" type="text/css" href="/css/fullds.min.css" />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/app.css" />
     <title>Registrant</title>
@@ -160,11 +156,11 @@
       </section>
       <button
         id="check-status"
-        onclick="handleCheckInOrOutRegistrant('<%=registrant.id%>', '<%=registrant.checkedIn%>')"
-        class="w-100 btn p-3 d-flex align-items-center justify-content-center mb-5 <%= !registrant.checkedIn ? 'bg-danger' : 'bg-success' %>"
+        onclick="handleCheckInOrOutRegistrant('<%=registrant.id%>', '<%=registrant.checked_in%>')"
+        class="w-100 btn p-3 d-flex align-items-center justify-content-center mb-5 <%= !registrant.checked_in ? 'bg-danger' : 'bg-success' %>"
       >
         <b class="fw-bold me-4"
-          ><%= !registrant.checkedIn ? 'Checked out' : 'Checked in'%></b
+          ><%= !registrant.checked_in ? 'Checked out' : 'Checked in'%></b
         >
       </button>
     </main>
@@ -193,7 +189,7 @@
 
         try {
           const req = await fetch(path, {
-            method: "PUT",
+            method: "POST",
           });
           const res = await req.json();
 

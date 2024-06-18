@@ -1,13 +1,13 @@
 // config
 import express from "express";
-const router = express.Router();
+const indexRouter = express.Router();
 
-router.get("/", async (req, res) => {
+indexRouter.get("/", async (req, res) => {
   res.render("index");
 });
 
-router.get("/success", async (req, res) => {
+indexRouter.get("/success", async (req, res) => {
   res.render("success");
 });
 
-export default router;
+export { indexRouter };

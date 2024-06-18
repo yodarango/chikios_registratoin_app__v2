@@ -8,10 +8,11 @@ dotenv.config();
 import express from "express";
 const app = express();
 
-// controllers
-import { publicRouter, privateRouter } from "./source/controllers/admin.js";
+// controllers & middleware
 import { authenticateToken } from "./source/helpers/auth/authenticate_token.js";
-import indexControllers from "./source/controllers/index.js";
+import { publicRouter, privateRouter } from "./source/controllers/admin.js";
+import { indexRouter } from "./source/controllers/index.js";
+import { requestLogger } from "./utils/request_logger.js";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -29,10 +30,9 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-app.use("/admin", publicRouter);
-
-app.use("/admin", authenticateToken, privateRouter);
-app.use("/", indexControllers);
+app.use("/admin", requestLogger, publicRouter);
+app.use("/admin", requestLogger, authenticateToken, privateRouter);
+app.use("/", requestLogger, indexRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`listening on port ${process.env.PORT}`);
