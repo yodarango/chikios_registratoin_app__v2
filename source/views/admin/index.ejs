@@ -142,7 +142,7 @@
             "onclick",
             `handleCheckInOrOutRegistrant("${id}", ${false})`
           );
-          registrantIdBtn.classList.remove("d-none");
+          registrantIdBtn.classList.remove("d-none", "bg-danger");
           registrantIdText.textContent = "IN";
 
           registrantIdBtn.classList.add("d-block", "bg-success");
@@ -151,7 +151,7 @@
             "onclick",
             `handleCheckInOrOutRegistrant("${id}", ${true})`
           );
-          registrantIdBtn.classList.remove("d-none");
+          registrantIdBtn.classList.remove("d-none", "bg-success");
           registrantIdText.textContent = "OUT";
 
           registrantIdBtn.classList.add("d-block", "bg-danger");
