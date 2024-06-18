@@ -110,7 +110,7 @@ privateRouter.delete("/delete/:id", async (req, res) => {
 
   registrant.id = req.params.id;
 
-  const { success } = await registrant.checkIn();
+  const { success } = await registrant.deleteRegistrant();
 
   res.status(200).json({ success });
 });

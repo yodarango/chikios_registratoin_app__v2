@@ -169,9 +169,9 @@
     <script>
       async function handleCheckInOrOutRegistrant(id, status) {
         const isCheckIn = Boolean(status);
-        const canContinue = validateInputs();
 
-        if (!id || !canContinue) return;
+        console.log(id, status);
+        if (!id) return;
 
         const registrantIdBtn = document.getElementById(`check-status`);
 
@@ -228,70 +228,6 @@
         } catch (error) {
           console.error(error);
         }
-      }
-
-      // i get the inputs and return them in an abject
-      function getInputs() {
-        const phone_number = document.getElementById("gphone").value;
-        const guardian_fn = document.getElementById("gfn").value;
-        const guardian_ln = document.getElementById("gln").value;
-        const ageString = document.getElementById("age").value;
-        const first_name = document.getElementById("fn").value;
-        const gender = document.getElementById("gender").value;
-        const last_name = document.getElementById("ln").value;
-        const age = Number(ageString || "1");
-
-        return {
-          phone_number,
-          guardian_ln,
-          guardian_fn,
-          first_name,
-          last_name,
-          gender,
-          age,
-        };
-      }
-
-      // I validate the inputs to make sure they are not empty
-      // and agree with the required parameters
-      function validateInputs() {
-        const {
-          phone_number,
-          guardian_ln,
-          guardian_fn,
-          first_name,
-          last_name,
-          gender,
-          age,
-        } = getInputs();
-
-        // Check if any of the required fields are empty or equal to zero
-        if (!first_name || !last_name) {
-          alert("Name and last name of the child are required!");
-          return false;
-        }
-
-        if (!(age > 3) || !(age < 12)) {
-          alert("Age ranges are 4 - 11");
-          return false;
-        }
-
-        if (!(gender > 0)) {
-          alert("Please enter the gender");
-          return false;
-        }
-
-        if (!guardian_fn || !guardian_ln) {
-          alert("Guardian first and last name required ");
-          return false;
-        }
-
-        if (!phone_number) {
-          alert("Guardian phone number is required");
-          return false;
-        }
-
-        return true;
       }
     </script>
   </body>
