@@ -69,11 +69,11 @@
                 <b>Delete</b>
               </button>
               <button
-                onclick="handleCheckInOrOutRegistrant('<%= registrant.id %>', '<%= !registrant.checked_in %>')"
-                class="color-beta py-2 px-0 m-0 flex-grow-1 d-flex align-items-center justify-content-center <%= registrant.checked_in ? ' bg-success' : 'bg-danger' %>"
+                onclick="handleCheckInOrOutRegistrant('<%= registrant.id %>', '<%= registrant.checked_in %>')"
+                class="color-beta py-2 px-0 m-0 flex-grow-1 d-flex align-items-center justify-content-center <%= registrant.checked_in > 0 ? ' bg-success' : 'bg-danger' %>"
                 id="check-status-<%= registrant.id %>"
               >
-                <b><%= registrant.checkedIn ? 'IN' : 'OUT'%></b>
+                <b><%= registrant.checked_in > 0 ? 'IN' : 'OUT'%></b>
               </button>
             </div>
           </div>
