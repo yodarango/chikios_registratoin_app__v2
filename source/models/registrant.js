@@ -14,7 +14,7 @@ export function Registrant() {
   this.getAllRegistrants = async function () {
     try {
       const { results } = await executeQuery(
-        `SELECT id, first_name, last_name, checked_in 
+        `SELECT id, first_name, last_name, checked_in, age
         FROM registrant
         ORDER BY first_name ASC`,
         [this.id]

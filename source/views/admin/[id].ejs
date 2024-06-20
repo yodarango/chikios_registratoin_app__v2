@@ -143,14 +143,11 @@
             </p>
           </div>
           <div class="w-100">
-            <input
-              type="text"
-              placeholder="Enter phone number"
+            <a
               class="form_input p-3 rounded-3 w-100"
-              id="gphone"
-              readonly
-              value="<%=registrant.guardian_phone_number%>"
-            />
+              href="tel:<%=registrant.guardian_phone_number%>"
+              ><%=registrant.guardian_phone_number%></a
+            >
           </div>
         </div>
       </section>
