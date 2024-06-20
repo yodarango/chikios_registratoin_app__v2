@@ -43,6 +43,7 @@
         <% registrants.forEach(registrant => { %>
         <div
           data-registrant-name="<%= registrant.first_name %> <%= registrant.last_name %>"
+          data-registrant-checked-in="<%= registrant.checked_in > 0%>"
           data-registrant-id="<%= registrant.id %>"
           class="card-<%= registrant.id %>"
         >
@@ -69,7 +70,7 @@
                 <b>Delete</b>
               </button>
               <button
-                onclick="handleCheckInOrOutRegistrant('<%= registrant.id %>', '<%= registrant.checked_in %>')"
+                onclick="handleCheckInOrOutRegistrant('<%= registrant.id %>', '<%= !(registrant.checked_in > 0) %>')"
                 class="color-beta py-2 px-0 m-0 flex-grow-1 d-flex align-items-center justify-content-center <%= registrant.checked_in > 0 ? ' bg-success' : 'bg-danger' %>"
                 id="check-status-<%= registrant.id %>"
               >
@@ -112,7 +113,7 @@
     }
 
     async function handleCheckInOrOutRegistrant(id, status) {
-      const isCheckIn = Boolean(status);
+      const isCheckIn = status === "true" || status === true;
 
       if (!id) return;
 
