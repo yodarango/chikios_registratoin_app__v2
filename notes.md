@@ -9,3 +9,4 @@
 - integrate a printer for automatic label printing with the child names
 - build a graph to look at a overall picture over the years
 - add a tracker to watch all the kids that have been to the bathroom and limit their exiting
+- add back the checked-out/ in by 'guardian' and add the same field for the admin so if the child is claiming to have been checked out/ in we can prove it

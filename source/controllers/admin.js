@@ -64,7 +64,7 @@ publicRouter.post("/new", async (req, res) => {
 // gets all registrants
 privateRouter.get("/", async (req, res) => {
   const registrant = new Registrant();
-  const registrants = await registrant.getAllRegistrants();
+  const registrants = await registrant.getAllRegistrantsForLastConf();
 
   res.status(200).render("admin/index", { registrants });
 });

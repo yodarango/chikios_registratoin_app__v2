@@ -4,4 +4,6 @@
 public/photos
 
 /deploy.sh
-**/.DS_Store
+.DS_Store
+
+sync_db.sh

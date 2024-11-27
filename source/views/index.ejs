@@ -14,10 +14,25 @@
     <main>
       <div class="pt-5">
         <h1 class="mb-3">Register</h1>
+        <div
+          class="mt-2 mb-4 rounded-3 p-4 bg-upsilon opacity-60 select-registrant-alert"
+        >
+          <p class="color-beta">
+            Please make sure your phone number is correct.
+          </p>
+        </div>
         <h3 class="mb-3 mx-0d mt-0">Child info</h3>
 
         <section id="form-data">
           <input type="text" id="img-url" hidden />
+          <input
+            type="text"
+            id="attendance"
+            name="attendance"
+            value="NYC.2024"
+            hidden
+          />
+          <input type="text" id="id" name="id" hidden />
           <div class="mb-5">
             <div
               class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
@@ -36,18 +51,39 @@
                   placeholder="Enter first name"
                   class="form_input p-3 bg-info-subtle rounded-3 w-100"
                   id="fn"
+                  onkeydown="filterRegistrants()"
+                  onfocus="displayDropdown()"
                 />
-                <div
-                  data-lastpass-icon-root="true"
-                  style="
-                    position: relative !important;
-                    height: 0px !important;
-                    width: 0px !important;
-                    float: left !important;
-                  "
-                ></div>
               </div>
             </div>
+            <!-- registrants dropdown -->
+            <div
+              class="rounded-4 bg-gamma registrants-dropdown py-4 mb-4 ms-auto me-0"
+            >
+              <% registrants.forEach(function(registrant) { %>
+              <button
+                class="p-0 m-0 bg-nu d-block w-100"
+                onclick="chooseRegistrant( {
+                  first_name: '<%= registrant.first_name %>',
+                  last_name: '<%= registrant.last_name %>',
+                  guardian_first_name: '<%= registrant.guardian_first_name %>',
+                  guardian_last_name: '<%= registrant.guardian_last_name %>',
+                  guardian_phone_number: '<%= registrant.guardian_phone_number %>',
+                  gender: '<%= registrant.gender %>',
+                  age: '<%= registrant.age %>',
+                  id: '<%= registrant.id %>',
+                })"
+              >
+                <p
+                  data-value="<%= registrant.first_name %> <%= registrant.last_name %>"
+                  class="px-4 py-2 border-bottom border-mu w-100"
+                >
+                  <%= registrant.first_name %> <%= registrant.last_name %>
+                </p>
+              </button>
+              <% }); %>
+            </div>
+
             <div
               class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
             >
@@ -208,6 +244,60 @@
       </div>
     </main>
     <div style="width: 100%; height: 5rem"></div>
+    <script>
+      function displayDropdown() {
+        const dropdown = document.querySelector(".registrants-dropdown");
+        dropdown.style.display = "block";
+      }
+
+      function hideDropdown(e) {
+        const dropdown = document.querySelector(".registrants-dropdown");
+        dropdown.style.display = "none";
+      }
+
+      function filterRegistrants() {
+        const input = document.getElementById("fn");
+        const dropdown = document.querySelector(".registrants-dropdown");
+        const buttons = dropdown.querySelectorAll("button");
+
+        buttons.forEach((button) => {
+          const name = button.querySelector("p").getAttribute("data-value");
+
+          if (name.toLowerCase().includes(input.value.toLowerCase())) {
+            button.style.display = "block";
+          } else {
+            button.style.display = "none";
+          }
+        });
+      }
+
+      // fill out all the inputs with the registrant data
+      function chooseRegistrant(registrant) {
+        hideDropdown();
+
+        // Fill out the inputs with the registrant data
+        document.getElementById("fn").value = registrant.first_name;
+        document.getElementById("ln").value = registrant.last_name;
+        document.getElementById("gfn").value = registrant.guardian_first_name;
+        document.getElementById("gln").value = registrant.guardian_last_name;
+        document.getElementById("gphone").value =
+          registrant.guardian_phone_number;
+
+        // if they are choosing a child that is already registered
+        // update the attendance fields
+        document.getElementById("attendance").value = "GMC.2024, NYC.2024";
+
+        // if they are choosing a child that is already registered
+        // we need the id to look up the registrant
+        document.getElementById("id").value = registrant.id;
+
+        const selectRegistrantAlert = document.querySelector(
+          ".select-registrant-alert"
+        );
+
+        selectRegistrantAlert.style.display = "block";
+      }
+    </script>
 
     <script>
       async function handleRegister(event) {
@@ -217,8 +307,10 @@
           guardian_fn,
           first_name,
           last_name,
+          attendance,
           gender,
           age,
+          id,
         } = getInputs();
 
         const canContinue = validateInputs();
@@ -228,11 +320,13 @@
           guardian_phone_number: phone_number,
           guardian_first_name: guardian_fn,
           guardian_last_name: guardian_ln,
+          attendance,
           checked_in: 0,
           first_name,
           last_name,
           gender,
           age,
+          id,
         });
 
         if (!canContinue) {
@@ -267,6 +361,7 @@
 
       // i get the inputs and return them in an abject
       function getInputs() {
+        const attendance = document.getElementById("attendance").value;
         const phone_number = document.getElementById("gphone").value;
         const guardian_fn = document.getElementById("gfn").value;
         const guardian_ln = document.getElementById("gln").value;
@@ -274,6 +369,8 @@
         const first_name = document.getElementById("fn").value;
         const gender = document.getElementById("gender").value;
         const last_name = document.getElementById("ln").value;
+        const id = document.getElementById("id").value;
+
         const age = Number(ageString || "1");
 
         return {
@@ -282,8 +379,10 @@
           guardian_fn,
           first_name,
           last_name,
+          attendance,
           gender,
           age,
+          id,
         };
       }
 

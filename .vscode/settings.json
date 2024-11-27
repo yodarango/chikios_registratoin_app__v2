@@ -1,24 +1,24 @@
 {
   "workbench.colorCustomizations": {
-    "activityBar.activeBackground": "#37feda",
+    "activityBar.activeBackground": "#7be6ff",
     "activityBar.activeBorder": "#e260fe",
-    "activityBar.background": "#37feda",
+    "activityBar.background": "#7be6ff",
     "activityBar.foreground": "#15202b",
     "activityBar.inactiveForeground": "#15202b99",
-    "activityBarBadge.background": "#e260fe",
+    "activityBarBadge.background": "#ff40db",
     "activityBarBadge.foreground": "#15202b",
-    "sash.hoverBorder": "#37feda",
-    "statusBar.background": "#04fed1",
+    "sash.hoverBorder": "#7be6ff",
+    "statusBar.background": "#48ddff",
     "statusBar.foreground": "#15202b",
-    "statusBarItem.hoverBackground": "#01cea9",
-    "statusBarItem.remoteBackground": "#04fed1",
+    "statusBarItem.hoverBackground": "#15d4ff",
+    "statusBarItem.remoteBackground": "#48ddff",
     "statusBarItem.remoteForeground": "#15202b",
-    "titleBar.activeBackground": "#04fed1",
+    "titleBar.activeBackground": "#48ddff",
     "titleBar.activeForeground": "#15202b",
-    "titleBar.inactiveBackground": "#04fed199",
+    "titleBar.inactiveBackground": "#48ddff99",
     "titleBar.inactiveForeground": "#15202b99",
     "commandCenter.border": "#15202b99",
     "gitDecoration.ignoredResourceForeground": "#f58c8c"
   },
-  "peacock.color": "#04fed1"
+  "peacock.color": "#48ddff"
 }
