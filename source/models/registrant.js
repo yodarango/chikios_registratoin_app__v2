@@ -105,6 +105,30 @@ export function Registrant() {
     }
   };
 
+  this.update = async function () {
+    try {
+      const { results } = await executeQuery(
+        `UPDATE registrant 
+        SET first_name = ?, last_name = ? , gender = ? , age = ?, attendance = ?
+        WHERE ID = ? `,
+        [
+          this.attendance,
+          this.firstName,
+          this.lastName,
+          this.gender,
+          this.age,
+          this.id,
+        ]
+      );
+
+      const newRegistrantId = results?.insertId;
+
+      return { newRegistrantId, success: results.affectedRows > 0 };
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // saves the registrant to the database
   this.save = async function () {
     try {

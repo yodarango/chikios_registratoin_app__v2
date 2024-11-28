@@ -50,15 +50,24 @@
           <div
             class="p-0 mb-4 mx-0 rounded-3 card bg-gamma border border-delta"
           >
-            <a
-              class="me-4 my-0 w-100 d-block"
-              href="/admin/<%= registrant.id %>"
+            <div
+              class="d-flex align-items-center justify-content-center column-gap-2"
             >
-              <h3 class="p-4">
-                <%= registrant.first_name %> <%= registrant.last_name %>, <%=
-                registrant.age %>
+              <a
+                class="me-4 my-0 w-100 d-block"
+                href="/admin/<%= registrant.id %>"
+              >
+                <h3 class="p-4">
+                  <%= registrant.first_name %> <%= registrant.last_name %>, <%=
+                  registrant.age %>
+                </h3>
+              </a>
+              <h3
+                class="bg-beta border border-alpha rounded-1 flex-shrink-0 me-4 p-2"
+              >
+                <%=registrant.id%>
               </h3>
-            </a>
+            </div>
             <div
               class="flex-shrink-0 d-flex align-items-center justify-content-center"
             >
