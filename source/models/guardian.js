@@ -15,7 +15,7 @@ export function Guardian() {
 
   this.save = async function () {
     const { results } = await executeQuery(
-      `INSERT INTO guardian (registrant_id, phone_number, first_name, last_name)
+      `INSERT INTO guardians (registrant_id, phone_number, first_name, last_name)
       VALUES (?, ?, ?, ?)`,
       [this.registrant_id, this.phone_number, this.first_name, this.last_name]
     );
@@ -25,7 +25,7 @@ export function Guardian() {
 
   this.checkIfGuardianExists = async function () {
     const { results } = await executeQuery(
-      `SELECT * FROM guardian WHERE id = ?`,
+      `SELECT * FROM guardians WHERE id = ?`,
       [this.id]
     );
 

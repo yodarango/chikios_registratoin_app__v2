@@ -20,7 +20,7 @@ export function Registrant() {
         g.first_name as guardian_first_name, 
         g.last_name as guardian_last_name, 
         g.phone_number as guardian_phone_number
-        FROM registrant as r
+        FROM registrants as r
         JOIN guardian as g
         ON r.id = g.registrant_id
         WHERE r.attendance = 'GMC.2024'
@@ -42,7 +42,7 @@ export function Registrant() {
         g.first_name as guardian_first_name, 
         g.last_name as guardian_last_name, 
         g.phone_number as guardian_phone_number
-        FROM registrant as r
+        FROM registrants as r
         JOIN guardian as g
         ON r.id = g.registrant_id
         WHERE r.attendance LIKE '%NYC.2024%'
@@ -63,7 +63,7 @@ export function Registrant() {
       g.first_name as guardian_first_name, 
       g.last_name as guardian_last_name, 
       g.phone_number as guardian_phone_number
-      FROM registrant as r
+      FROM registrants as r
       JOIN guardian as g
       ON r.id = g.registrant_id
       WHERE r.id = ?`,
@@ -95,7 +95,7 @@ export function Registrant() {
   this.checkIfRegistrantExists = async function () {
     try {
       const { results } = await executeQuery(
-        `SELECT * FROM registrant WHERE id = ?`,
+        `SELECT * FROM registrants WHERE id = ?`,
         [this.id]
       );
 
@@ -108,7 +108,7 @@ export function Registrant() {
   this.update = async function () {
     try {
       const { results } = await executeQuery(
-        `UPDATE registrant 
+        `UPDATE registrants 
         SET first_name = ?, last_name = ? , gender = ? , age = ?, attendance = ?
         WHERE ID = ? `,
         [
@@ -133,7 +133,7 @@ export function Registrant() {
   this.save = async function () {
     try {
       const { results } = await executeQuery(
-        `INSERT INTO registrant (first_name, last_name, checked_in, gender, age, attendance)
+        `INSERT INTO registrants (first_name, last_name, checked_in, gender, age, attendance)
       VALUES (?, ?, ?, ?, ?, ?)`,
         [
           this.firstName,
@@ -156,7 +156,7 @@ export function Registrant() {
   this.checkIn = async function () {
     try {
       const { results } = await executeQuery(
-        "UPDATE registrant SET checked_in = ? WHERE id = ?",
+        "UPDATE registrants SET checked_in = ? WHERE id = ?",
         [this.checkedIn, this.id]
       );
 
@@ -169,7 +169,7 @@ export function Registrant() {
   this.checkOut = async function () {
     try {
       const { results } = await executeQuery(
-        "UPDATE registrant SET checked_in = ? WHERE id = ?",
+        "UPDATE registrants SET checked_in = ? WHERE id = ?",
         [this.checkedIn, this.id]
       );
 
@@ -182,7 +182,7 @@ export function Registrant() {
   this.deleteRegistrant = async function () {
     try {
       const { results } = await executeQuery(
-        "DELETE FROM registrant WHERE id = ?",
+        "DELETE FROM registrants WHERE id = ?",
         [this.id]
       );
 
