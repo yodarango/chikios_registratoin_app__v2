@@ -13,26 +13,11 @@
   <body>
     <main>
       <div class="pt-5">
-        <h1 class="mb-3">Register</h1>
-        <div
-          class="mt-2 mb-4 rounded-3 p-4 bg-upsilon opacity-60 select-registrant-alert"
-        >
-          <p class="color-beta">
-            Please make sure your phone number is correct.
-          </p>
-        </div>
-        <h3 class="mb-3 mx-0d mt-0">Child info</h3>
+        <h1 class="mb-3">Create an account</h1>
+
+        <h3 class="mb-3 mx-0d mt-0">Get started below</h3>
 
         <section id="form-data">
-          <input type="text" id="img-url" hidden />
-          <input
-            type="text"
-            id="attendance"
-            name="attendance"
-            value="NYC.2024"
-            hidden
-          />
-          <input type="text" id="id" name="id" hidden />
           <div class="mb-5">
             <div
               class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
@@ -56,34 +41,6 @@
                 />
               </div>
             </div>
-            <!-- registrants dropdown -->
-            <div
-              class="rounded-4 bg-gamma registrants-dropdown py-4 mb-4 ms-auto me-0"
-            >
-              <% registrants.forEach(function(registrant) { %>
-              <button
-                class="p-0 m-0 bg-nu d-block w-100"
-                onclick="chooseRegistrant( {
-                  first_name: '<%= registrant.first_name %>',
-                  last_name: '<%= registrant.last_name %>',
-                  guardian_first_name: '<%= registrant.guardian_first_name %>',
-                  guardian_last_name: '<%= registrant.guardian_last_name %>',
-                  guardian_phone_number: '<%= registrant.guardian_phone_number %>',
-                  gender: '<%= registrant.gender %>',
-                  age: '<%= registrant.age %>',
-                  id: '<%= registrant.id %>',
-                })"
-              >
-                <p
-                  data-value="<%= registrant.first_name %> <%= registrant.last_name %>"
-                  class="px-4 py-2 border-bottom border-mu w-100"
-                >
-                  <%= registrant.first_name %> <%= registrant.last_name %>
-                </p>
-              </button>
-              <% }); %>
-            </div>
-
             <div
               class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
             >
@@ -104,135 +61,43 @@
                 />
               </div>
             </div>
-            <div
-              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
-            >
-              <div style="min-width: 100px">
-                <p
-                  style="font-size: 16px"
-                  class="chikios-paragraph me-3 flex-shrink-0 text-left"
-                >
-                  Age:
-                </p>
-              </div>
-              <div class="w-100">
-                <input
-                  type="number"
-                  placeholder="0"
-                  class="form_input-number p-3 rounded-3"
-                  id="age"
-                  max="11"
-                  min="4"
-                />
-              </div>
-            </div>
-            <div
-              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
-            >
-              <div style="min-width: 100px">
-                <p
-                  style="font-size: 16px"
-                  class="chikios-paragraph my-0 me-3 flex-shrink-0 text-left"
-                >
-                  Gender:
-                </p>
-              </div>
-              <div
-                class="w-100 d-flex align-items-center justify-content-start"
-              >
-                <input
-                  type="number"
-                  id="gender"
-                  name="gender"
-                  value="0"
-                  hidden
-                />
+          </div>
 
-                <button
-                  id="malebtn"
-                  onclick="handleGender(1, 'malebtn')"
-                  class="rounded-2 me-3"
-                >
-                  M
-                </button>
-                <button
-                  id="femalebtn"
-                  onclick="handleGender(2, 'femalebtn')"
-                  class="rounded-2"
-                >
-                  F
-                </button>
-              </div>
-            </div>
-          </div>
-          <h3 class="mb-3 mx-0d mt-0">Guardian</h3>
-          <div class="mb-5">
-            <div
-              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
-            >
-              <div style="min-width: 100px">
-                <p class="chikios-paragraph me-3 flex-shrink-0 text-left">
-                  First name:
-                </p>
-              </div>
-              <div class="w-100">
-                <input
-                  type="text"
-                  placeholder="Enter first name"
-                  class="form_input p-3 rounded-3 w-100"
-                  id="gfn"
-                />
-              </div>
-            </div>
-            <div
-              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
-            >
-              <div style="min-width: 100px">
-                <p class="chikios-paragraph me-3 flex-shrink-0 text-left">
-                  Last name:
-                </p>
-              </div>
-              <div class="w-100">
-                <input
-                  type="text"
-                  placeholder="Enter last name"
-                  class="form_input p-3 rounded-3 w-100"
-                  id="gln"
-                />
-              </div>
-            </div>
-            <div
-              class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
-            >
-              <div style="min-width: 100px">
-                <p s class="chikios-paragraph me-3 flex-shrink-0 text-left">
-                  Phone #:
-                </p>
-              </div>
-              <div class="w-100">
-                <input
-                  placeholder="Enter phone number"
-                  class="form_input p-3 rounded-3 w-100"
-                  id="gphone"
-                />
-              </div>
-            </div>
-            <div
-              class="d-flex align-items-start justify-content-center flex-nowrap mb-4"
-            >
-              <p
-                style="min-width: 100px"
-                class="chikios-paragraph mb-2 text-left"
-              >
-                Notes:
+          <div
+            class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+          >
+            <div style="min-width: 100px">
+              <p class="chikios-paragraph me-3 flex-shrink-0 text-left">
+                Email
               </p>
-              <textarea
-                placeholder="Is there anything we should know about your child?"
-                rows="3"
-                class="form_textarea d-block bg-secondary p-3 rounded-3 color-tertiary w-100"
-              ></textarea>
+            </div>
+            <div class="w-100">
+              <input
+                type="text"
+                placeholder="Enter email"
+                class="form_input p-3 rounded-3 w-100"
+                id="email"
+              />
             </div>
           </div>
+          <div
+            class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
+          >
+            <div style="min-width: 100px">
+              <p class="chikios-paragraph me-3 flex-shrink-0 text-left">
+                Password
+              </p>
+            </div>
+            <div class="w-100">
+              <input
+                type="text"
+                placeholder="Enter password"
+                class="form_input p-3 rounded-3 w-100"
+                id="password"
+              />
+            </div>
+          </div>
+
           <button
             class="rounded-1 w-100 bg-info color-beta"
             id="register-btn"
@@ -244,74 +109,10 @@
       </div>
     </main>
     <div style="width: 100%; height: 5rem"></div>
-    <script>
-      function displayDropdown() {
-        const dropdown = document.querySelector(".registrants-dropdown");
-        dropdown.style.display = "block";
-      }
-
-      function hideDropdown(e) {
-        const dropdown = document.querySelector(".registrants-dropdown");
-        dropdown.style.display = "none";
-      }
-
-      function filterRegistrants() {
-        const input = document.getElementById("fn");
-        const dropdown = document.querySelector(".registrants-dropdown");
-        const buttons = dropdown.querySelectorAll("button");
-
-        buttons.forEach((button) => {
-          const name = button.querySelector("p").getAttribute("data-value");
-
-          if (name.toLowerCase().includes(input.value.toLowerCase())) {
-            button.style.display = "block";
-          } else {
-            button.style.display = "none";
-          }
-        });
-      }
-
-      // fill out all the inputs with the registrant data
-      function chooseRegistrant(registrant) {
-        hideDropdown();
-
-        // Fill out the inputs with the registrant data
-        document.getElementById("fn").value = registrant.first_name;
-        document.getElementById("ln").value = registrant.last_name;
-        document.getElementById("gfn").value = registrant.guardian_first_name;
-        document.getElementById("gln").value = registrant.guardian_last_name;
-        document.getElementById("gphone").value =
-          registrant.guardian_phone_number;
-
-        // if they are choosing a child that is already registered
-        // update the attendance fields
-        document.getElementById("attendance").value = "GMC.2024, NYC.2024";
-
-        // if they are choosing a child that is already registered
-        // we need the id to look up the registrant
-        document.getElementById("id").value = registrant.id;
-
-        const selectRegistrantAlert = document.querySelector(
-          ".select-registrant-alert"
-        );
-
-        selectRegistrantAlert.style.display = "block";
-      }
-    </script>
 
     <script>
       async function handleRegister(event) {
-        const {
-          phone_number,
-          guardian_ln,
-          guardian_fn,
-          first_name,
-          last_name,
-          attendance,
-          gender,
-          age,
-          id,
-        } = getInputs();
+        const { first_name, last_name, email, password } = getInputs();
 
         const canContinue = validateInputs();
 
@@ -361,87 +162,68 @@
 
       // i get the inputs and return them in an abject
       function getInputs() {
-        const attendance = document.getElementById("attendance").value;
-        const phone_number = document.getElementById("gphone").value;
-        const guardian_fn = document.getElementById("gfn").value;
-        const guardian_ln = document.getElementById("gln").value;
-        const ageString = document.getElementById("age").value;
+        const password = document.getElementById("password").value;
         const first_name = document.getElementById("fn").value;
-        const gender = document.getElementById("gender").value;
         const last_name = document.getElementById("ln").value;
-        const id = document.getElementById("id").value;
-
-        const age = Number(ageString || "1");
+        const email = document.getElementById("email").value;
 
         return {
-          phone_number,
-          guardian_ln,
-          guardian_fn,
+          password,
           first_name,
           last_name,
-          attendance,
-          gender,
-          age,
-          id,
+          email,
         };
       }
 
       // I validate the inputs to make sure they are not empty
       // and agree with the required parameters
       function validateInputs() {
-        const {
-          phone_number,
-          guardian_ln,
-          guardian_fn,
-          first_name,
-          last_name,
-          gender,
-          age,
-        } = getInputs();
+        const { password, first_name, last_name, email } = getInputs();
 
         // Check if any of the required fields are empty or equal to zero
         if (!first_name || !last_name) {
-          alert("Name and last name of the child are required!");
+          alert("First and last name are required");
           return false;
         }
 
-        if (!(age > 3) || !(age < 12)) {
-          alert("Age ranges are 4 - 11");
+        if (!password) {
+          alert("Password is required");
           return false;
         }
 
-        if (!(gender > 0)) {
-          alert("Please enter the gender");
+        if (!email) {
+          alert("Email is required");
           return false;
         }
 
-        if (!guardian_fn || !guardian_ln) {
-          alert("Guardian first and last name required ");
+        if (!validateEmail(email)) {
+          alert("Email is invalid");
           return false;
         }
 
-        if (!phone_number) {
-          alert("Guardian phone number is required");
+        if (!validatePassword(password)) {
+          alert(
+            "Password must be at least 8 characters long and contain a combination of letters, numbers, and special characters"
+          );
           return false;
         }
 
         return true;
       }
 
-      // handles styles for selecting the gender btn.
-      function handleGender(value, gender) {
-        const radioInput = document.getElementById("gender");
-        const buttonContainer = document.getElementById(gender);
+      function validateEmail(email) {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+      }
 
-        const buttonMale = document.querySelector("#malebtn");
-        const buttonFemale = document.querySelector("#femalebtn");
-
-        buttonMale.classList.remove("active");
-        buttonFemale.classList.remove("active");
-
-        buttonContainer.classList.add("active");
-
-        radioInput.value = value;
+      // Passwords must be at least 8 chars lond and be a
+      // combination of letters, numbers, and special
+      // characters. At least one of each must be
+      // present
+      function validatePassword(password) {
+        const re =
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+        return re.test(password);
       }
 
       // handles the loading state for button
