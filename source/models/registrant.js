@@ -74,7 +74,7 @@ export function Registrant() {
         return results[0];
       }
 
-      return [];
+      return null;
     } catch (error) {
       console.error(error);
     }

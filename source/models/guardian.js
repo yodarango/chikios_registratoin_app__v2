@@ -22,4 +22,13 @@ export function Guardian() {
 
     return { results, success: true };
   };
+
+  this.checkIfGuardianExists = async function () {
+    const { results } = await executeQuery(
+      `SELECT * FROM guardian WHERE id = ?`,
+      [this.id]
+    );
+
+    return { results, success: results.length > 0 };
+  };
 }

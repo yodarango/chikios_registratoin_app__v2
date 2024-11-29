@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 // sign the token
-export const generateAccessToken = async (user) => {
+export const signNewToken = async (user) => {
   if (!user) {
     return;
   }

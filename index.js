@@ -9,10 +9,10 @@ import express from "express";
 const app = express();
 
 // controllers & middleware
-import { authenticateToken } from "./source/helpers/auth/authenticate_token.js";
 import { publicRouter, privateRouter } from "./source/controllers/admin.js";
+import { authenticateToken } from "./source/auth/index.js";
 import { indexRouter } from "./source/controllers/index.js";
-import { requestLogger } from "./utils/request_logger.js";
+import { requestLogger } from "./source/utils/index.js";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);

@@ -1,4 +1,4 @@
-export const currTime = () => {
+export const getStandardTimeFromLocaleString = () => {
   const today = new Date(
     new Date().toLocaleString("en-US", "America/New_York")
   );
