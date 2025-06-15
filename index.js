@@ -9,7 +9,11 @@ import express from "express";
 const app = express();
 
 // controllers & middleware
-import { publicRouter, privateRouter } from "./source/controllers/admin.js";
+import {
+  publicRegistrantRouter,
+  privateAdminRouter,
+  publicAdminRouter,
+} from "./source/controllers/index.js";
 import { authenticateToken } from "./source/auth/index.js";
 import { indexRouter } from "./source/controllers/index.js";
 import { requestLogger } from "./source/utils/index.js";
@@ -30,8 +34,9 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-app.use("/admin", requestLogger, publicRouter);
-app.use("/admin", requestLogger, authenticateToken, privateRouter);
+app.use("/admin", requestLogger, authenticateToken, privateAdminRouter);
+app.use("/registrant", requestLogger, publicRegistrantRouter);
+app.use("/admin", requestLogger, publicAdminRouter);
 app.use("/", requestLogger, indexRouter);
 
 app.listen(process.env.PORT, () => {

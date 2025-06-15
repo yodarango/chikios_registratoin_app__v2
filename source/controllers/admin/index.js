@@ -1,51 +1,15 @@
 // config
 import express from "express";
-const publicRouter = express.Router();
-const privateRouter = express.Router();
+const publicAdminRouter = express.Router();
+const privateAdminRouter = express.Router();
 
-import { authenticateToken } from "../auth/index.js";
-import { createResponse } from "../utils/index.js";
-import { Registrant } from "../models/registrant.js";
-import { Guardian } from "../models/guardian.js";
-
-publicRouter.get("/login", async (req, res) => {
-  res.status(200).render("admin/login");
-});
-
-// login
-publicRouter.post("/login", async (req, res) => {
-  if (req.cookies.authorization) {
-    res.redirect("/admin/users");
-    return;
-  }
-
-  try {
-    if (
-      req?.body?.username.toLowerCase() === process.env &&
-      req?.body?.password === ""
-    ) {
-      const token = await authenticateToken({
-        username: req?.body?.username,
-        email: req?.body?.admin_email,
-      });
-
-      createResponse(res, { data: token, error: null });
-      return;
-    }
-
-    createResponse(res, {
-      data: null,
-      error: "Wrong credentials. Please try again!",
-    });
-  } catch (error) {
-    console.error(error);
-
-    createResponse(res, { data: null, error: error });
-  }
-});
+import { authenticateToken } from "../../auth/index.js";
+import { createResponse } from "../../utils/index.js";
+import { Registrant } from "../../models/registrant.js";
+import { Guardian } from "../../models/guardian.js";
 
 // creates a new registrant
-publicRouter.post("/new", async (req, res) => {
+publicAdminRouter.post("/new", async (req, res) => {
   try {
     // instantiate the registrant and guardian objects
     const registrant = new Registrant();
@@ -105,7 +69,7 @@ publicRouter.post("/new", async (req, res) => {
   }
 });
 
-publicRouter.put("/update/registrant/:id", async (req, res) => {
+publicAdminRouter.put("/update/registrant/:id", async (req, res) => {
   try {
     const registrant = new Registrant();
     registrant.newRegistrantFromRequestBody(req.body);
@@ -126,7 +90,7 @@ publicRouter.put("/update/registrant/:id", async (req, res) => {
 });
 
 // gets all registrants
-privateRouter.get("/", async (req, res) => {
+privateAdminRouter.get("/", async (req, res) => {
   const registrant = new Registrant();
   const registrants = await registrant.getAllRegistrantsForLastConf();
 
@@ -134,7 +98,7 @@ privateRouter.get("/", async (req, res) => {
 });
 
 // gets a registrant by id
-privateRouter.get("/:id", async (req, res) => {
+privateAdminRouter.get("/:id", async (req, res) => {
   const registrant = new Registrant();
 
   registrant.id = req.params.id;
@@ -150,7 +114,7 @@ privateRouter.get("/:id", async (req, res) => {
 });
 
 // checks out a registrant
-privateRouter.post("/check-out/:id", async (req, res) => {
+privateAdminRouter.post("/check-out/:id", async (req, res) => {
   const registrant = new Registrant();
 
   registrant.id = req.params.id;
@@ -170,7 +134,7 @@ privateRouter.post("/check-out/:id", async (req, res) => {
 });
 
 // checks in a registrant
-privateRouter.post("/check-in/:id", async (req, res) => {
+privateAdminRouter.post("/check-in/:id", async (req, res) => {
   const registrant = new Registrant();
 
   registrant.id = req.params.id;
@@ -190,7 +154,7 @@ privateRouter.post("/check-in/:id", async (req, res) => {
 });
 
 // deletes a registrant
-privateRouter.delete("/delete/:id", async (req, res) => {
+privateAdminRouter.delete("/delete/:id", async (req, res) => {
   const registrant = new Registrant();
 
   registrant.id = req.params.id;
@@ -208,4 +172,4 @@ privateRouter.delete("/delete/:id", async (req, res) => {
   createResponse(res, { data: req.body, error: null });
 });
 
-export { publicRouter, privateRouter };
+export { publicAdminRouter, privateAdminRouter };
