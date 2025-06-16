@@ -68,7 +68,8 @@
                   last_name: '<%= registrant.last_name %>',
                   guardian_first_name: '<%= registrant.guardian_first_name %>',
                   guardian_last_name: '<%= registrant.guardian_last_name %>',
-                  guardian_phone_number: '<%= registrant.guardian_phone_number %>',
+                  guardian_phone_number: '',//'<%= registrant.guardian_phone_number %>',
+                  attendance: '<%= registrant.attendance %>',
                   gender: '<%= registrant.gender %>',
                   age: '<%= registrant.age %>',
                   id: '<%= registrant.id %>',
@@ -285,7 +286,10 @@
 
         // if they are choosing a child that is already registered
         // update the attendance fields
-        document.getElementById("attendance").value = "GMC.2024, NYC.2024";
+        document.getElementById("attendance").value =
+          registrant.attendance.includes("GMC.2025")
+            ? registrant.attendance
+            : registrant.attendance + ", GMC.2025";
 
         // if they are choosing a child that is already registered
         // we need the id to look up the registrant
@@ -378,8 +382,8 @@
           guardian_ln,
           guardian_fn,
           first_name,
-          last_name,
           attendance,
+          last_name,
           gender,
           age,
           id,

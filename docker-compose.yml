@@ -1,26 +1,27 @@
 version: "3.8"
 
 services:
-  chikios:
-    container_name: chikios
-    build: .
-    ports:
-      - "3003:3003"
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      - mysql-db
-    command: ["npm", "start"]
+  # chikios:
+  #   container_name: chikios
+  #   build: .
+  #   ports:
+  #     - "3003:3003"
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   depends_on:
+  #     - mysql-db
+  #   command: ["npm", "start"]
 
-  mysql-db:
+  chikios_db:
+    container_name: chikios_db
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: my5ql_ch1k1o5*
       MYSQL_DATABASE: chikios
       MYSQL_PASSWORD: my5ql_ch1k1o5*
     ports:
-      - "3308:3306"
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
 

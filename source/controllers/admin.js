@@ -65,6 +65,7 @@ publicRouter.post("/new", async (req, res) => {
     // only create a new record for the registrant and guardian if they don't exist
     let newRegistrantId = null;
     let registrantSuccess = false;
+    console.log(registrant, req.body);
     if (registrantExists) {
       const registrantUpdate = await registrant.update();
       newRegistrantId = registrantUpdate.newRegistrantId;

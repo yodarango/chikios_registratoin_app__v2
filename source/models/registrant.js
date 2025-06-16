@@ -23,10 +23,11 @@ export function Registrant() {
         FROM registrant as r
         JOIN guardian as g
         ON r.id = g.registrant_id
-        WHERE r.attendance = 'GMC.2024'
+        WHERE r.attendance LIKE '%2024%'
         ORDER BY first_name ASC`,
         []
       );
+      console.log(results);
       return results;
     } catch (error) {
       console.error(error);
@@ -40,8 +41,8 @@ export function Registrant() {
       const { results } = await executeQuery(
         `SELECT r.*, 
         g.first_name as guardian_first_name, 
-        g.last_name as guardian_last_name, 
-        g.phone_number as guardian_phone_number
+        g.last_name as guardian_last_name
+        // g.phone_number as guardian_phone_number
         FROM registrant as r
         JOIN guardian as g
         ON r.id = g.registrant_id
@@ -86,6 +87,7 @@ export function Registrant() {
     this.firstName = body.first_name;
     this.checkedIn = body.checked_in;
     this.lastName = body.last_name;
+    this.gender = body.gender;
     this.checkIn = false;
     this.age = body.age;
     this.id = body.id;
