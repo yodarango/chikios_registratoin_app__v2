@@ -44,7 +44,7 @@ export function Registrant() {
         g.last_name as guardian_last_name,
         g.phone_number as guardian_phone_number
         FROM registrant as r
-        JOIN guardian as g
+        LEFT JOIN guardian as g
         ON r.id = g.registrant_id
         ORDER BY first_name ASC`,
         []
