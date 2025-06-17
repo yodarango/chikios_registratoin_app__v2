@@ -46,7 +46,6 @@ export function Registrant() {
         FROM registrant as r
         JOIN guardian as g
         ON r.id = g.registrant_id
-        WHERE r.attendance LIKE '%GMC.2025%'
         ORDER BY first_name ASC`,
         []
       );
