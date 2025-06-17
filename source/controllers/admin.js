@@ -54,7 +54,7 @@ privateRouter.get("/:id", async (req, res) => {
     return;
   }
 
-  createResponse(res, { data: singleRegistrant, error: null, success: true });
+  res.status(200).render("admin/[id]", { registrant: singleRegistrant });
 });
 
 // checks out a registrant
