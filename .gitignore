@@ -3,7 +3,8 @@
 
 public/photos
 
-/deploy.sh
 .DS_Store
 
+deploy.sh
 sync_db.sh
+backup_db.sh
