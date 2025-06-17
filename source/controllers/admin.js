@@ -29,18 +29,19 @@ publicRouter.post("/login", async (req, res) => {
         email: req?.body?.admin_email,
       });
 
-      createResponse(res, { data: token, error: null });
+      createResponse(res, { data: token, error: null, success: true });
       return;
     }
 
     createResponse(res, {
       data: null,
       error: "Wrong credentials. Please try again!",
+      success: false,
     });
   } catch (error) {
     console.error(error);
 
-    createResponse(res, { data: null, error: error });
+    createResponse(res, { data: null, error: error, success: false });
   }
 });
 
@@ -56,19 +57,18 @@ publicRouter.post("/new", async (req, res) => {
     guardian.newGuardianFromRequestBody(req.body);
 
     // check if guardian exists
-    const { success: guardianExists } = await guardian.checkIfGuardianExists();
+    const guardianExists = await guardian.checkIfGuardianExists();
 
     // check if the registrant exists
-    const { success: registrantExists } =
-      await registrant.checkIfRegistrantExists();
+    const registrantExists = await registrant.checkIfRegistrantExists();
 
     // only create a new record for the registrant and guardian if they don't exist
     let newRegistrantId = null;
     let registrantSuccess = false;
-    console.log(registrant, req.body);
+
     if (registrantExists) {
       const registrantUpdate = await registrant.update();
-      newRegistrantId = registrantUpdate.newRegistrantId;
+      newRegistrantId = registrantUpdate.updatedRegistrantId;
       registrantSuccess = registrantUpdate.success;
     } else {
       const registrantSave = await registrant.save();
@@ -80,7 +80,11 @@ publicRouter.post("/new", async (req, res) => {
     guardian.registrant_id = newRegistrantId;
 
     if (!registrantSuccess) {
-      createResponse(res, { data: null, error: "Failed to save registrant" });
+      createResponse(res, {
+        data: null,
+        error: "Failed to save registrant",
+        success: false,
+      });
       return;
     }
 
@@ -95,14 +99,18 @@ publicRouter.post("/new", async (req, res) => {
     }
 
     if (!guardianSuccess) {
-      createResponse(res, { data: null, error: "Failed to save guardian" });
+      createResponse(res, {
+        data: null,
+        error: "Failed to save guardian",
+        success: false,
+      });
       return;
     }
 
-    createResponse(res, { data: req.body, error: null });
+    createResponse(res, { data: req.body, error: null, success: true });
   } catch (error) {
     console.error(error);
-    createResponse(res, { data: null, error: error });
+    createResponse(res, { data: null, error: error, success: false });
   }
 });
 
@@ -114,15 +122,19 @@ publicRouter.put("/update/registrant/:id", async (req, res) => {
     const { success } = await registrant.update();
 
     if (!success) {
-      createResponse(res, { data: null, error: "Failed to update registrant" });
+      createResponse(res, {
+        data: null,
+        error: "Failed to update registrant",
+        success: false,
+      });
       return;
     }
 
-    createResponse(res, { data: req.body, error: null });
+    createResponse(res, { data: req.body, error: null, success: true });
   } catch (error) {
     console.error(error);
 
-    createResponse(res, { data: null, error: error });
+    createResponse(res, { data: null, error: error, success: false });
   }
 });
 
@@ -143,11 +155,15 @@ privateRouter.get("/:id", async (req, res) => {
   const singleRegistrant = await registrant.getSingleRegistrantById();
 
   if (!singleRegistrant) {
-    createResponse(res, { data: null, error: "Registrant not found" });
+    createResponse(res, {
+      data: null,
+      error: "Registrant not found",
+      success: false,
+    });
     return;
   }
 
-  createResponse(res, { data: singleRegistrant, error: null });
+  createResponse(res, { data: singleRegistrant, error: null, success: true });
 });
 
 // checks out a registrant
@@ -163,11 +179,12 @@ privateRouter.post("/check-out/:id", async (req, res) => {
     createResponse(res, {
       data: null,
       error: "Failed to check out registrant",
+      success: false,
     });
     return;
   }
 
-  createResponse(res, { data: req.body, error: null });
+  createResponse(res, { data: req.body, error: null, success: true });
 });
 
 // checks in a registrant
@@ -183,11 +200,12 @@ privateRouter.post("/check-in/:id", async (req, res) => {
     createResponse(res, {
       data: null,
       error: "Failed to check in registrant",
+      success: false,
     });
     return;
   }
 
-  createResponse(res, { data: req.body, error: null });
+  createResponse(res, { data: req.body, error: null, success: true });
 });
 
 // deletes a registrant
@@ -202,11 +220,12 @@ privateRouter.delete("/delete/:id", async (req, res) => {
     createResponse(res, {
       data: null,
       error: "Failed to delete registrant",
+      success: false,
     });
     return;
   }
 
-  createResponse(res, { data: req.body, error: null });
+  createResponse(res, { data: req.body, error: null, success: true });
 });
 
 export { publicRouter, privateRouter };

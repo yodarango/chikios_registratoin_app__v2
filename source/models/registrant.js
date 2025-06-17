@@ -19,7 +19,8 @@ export function Registrant() {
         `SELECT r.*, 
         g.first_name as guardian_first_name, 
         g.last_name as guardian_last_name, 
-        g.phone_number as guardian_phone_number
+        g.phone_number as guardian_phone_number,
+        g.id as guardian_id
         FROM registrant as r
         JOIN guardian as g
         ON r.id = g.registrant_id
@@ -27,7 +28,7 @@ export function Registrant() {
         ORDER BY first_name ASC`,
         []
       );
-      console.log(results);
+
       return results;
     } catch (error) {
       console.error(error);
@@ -111,7 +112,7 @@ export function Registrant() {
     try {
       const { results } = await executeQuery(
         `UPDATE registrant 
-        SET first_name = ?, last_name = ? , gender = ? , age = ?, attendance = ?
+        SET attendance = ?, first_name = ?, last_name = ? , gender = ? , age = ?
         WHERE ID = ? `,
         [
           this.attendance,
@@ -123,9 +124,9 @@ export function Registrant() {
         ]
       );
 
-      const newRegistrantId = results?.insertId;
+      const updatedRegistrantId = results?.insertId;
 
-      return { newRegistrantId, success: results.affectedRows > 0 };
+      return { updatedRegistrantId, success: results.affectedRows > 0 };
     } catch (error) {
       console.error(error);
     }

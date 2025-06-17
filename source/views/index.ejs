@@ -29,7 +29,7 @@
             type="text"
             id="attendance"
             name="attendance"
-            value="NYC.2024"
+            value="GMC.2025"
             hidden
           />
           <input type="text" id="id" name="id" hidden />
@@ -68,7 +68,7 @@
                   last_name: '<%= registrant.last_name %>',
                   guardian_first_name: '<%= registrant.guardian_first_name %>',
                   guardian_last_name: '<%= registrant.guardian_last_name %>',
-                  guardian_phone_number: '',//'<%= registrant.guardian_phone_number %>',
+                  guardian_id: '<%= registrant.guardian_id %>',
                   attendance: '<%= registrant.attendance %>',
                   gender: '<%= registrant.gender %>',
                   age: '<%= registrant.age %>',
@@ -168,6 +168,7 @@
           </div>
           <h3 class="mb-3 mx-0d mt-0">Guardian</h3>
           <div class="mb-5">
+            <input type="text" id="gid" name="guardian_id" value="" hidden />
             <div
               class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
             >
@@ -246,11 +247,13 @@
     </main>
     <div style="width: 100%; height: 5rem"></div>
     <script>
+      // Dropdown displayed so users can choose a specific registrant
       function displayDropdown() {
         const dropdown = document.querySelector(".registrants-dropdown");
         dropdown.style.display = "block";
       }
 
+      // Hide the dropdown for users can choose a specific registrant
       function hideDropdown(e) {
         const dropdown = document.querySelector(".registrants-dropdown");
         dropdown.style.display = "none";
@@ -281,8 +284,6 @@
         document.getElementById("ln").value = registrant.last_name;
         document.getElementById("gfn").value = registrant.guardian_first_name;
         document.getElementById("gln").value = registrant.guardian_last_name;
-        document.getElementById("gphone").value =
-          registrant.guardian_phone_number;
 
         // if they are choosing a child that is already registered
         // update the attendance fields
@@ -291,9 +292,11 @@
             ? registrant.attendance
             : registrant.attendance + ", GMC.2025";
 
-        // if they are choosing a child that is already registered
-        // we need the id to look up the registrant
+        // if they are choosing a child or guardian that is already registered
+        // we need the id to look them up
         document.getElementById("id").value = registrant.id;
+        registrant.guardian_phone_number;
+        document.getElementById("gid").value = registrant.guardian_id;
 
         const selectRegistrantAlert = document.querySelector(
           ".select-registrant-alert"
@@ -307,11 +310,12 @@
       async function handleRegister(event) {
         const {
           phone_number,
+          guardian_id,
           guardian_ln,
           guardian_fn,
+          attendance,
           first_name,
           last_name,
-          attendance,
           gender,
           age,
           id,
@@ -324,6 +328,7 @@
           guardian_phone_number: phone_number,
           guardian_first_name: guardian_fn,
           guardian_last_name: guardian_ln,
+          guardian_id,
           attendance,
           checked_in: 0,
           first_name,
@@ -351,7 +356,8 @@
           const res = await req.json();
 
           if (res?.success) {
-            const query = `id=${res.newRegistrantId}&firstName=${first_name}&lastName${last_name}`;
+            const { data } = res;
+            const query = `id=${data.id}&firstName=${data.first_name}&lastName=${data.last_name}`;
 
             const router = `/success?${query}`;
             location.href = router;
@@ -369,6 +375,7 @@
         const phone_number = document.getElementById("gphone").value;
         const guardian_fn = document.getElementById("gfn").value;
         const guardian_ln = document.getElementById("gln").value;
+        const guardian_id = document.getElementById("gid").value;
         const ageString = document.getElementById("age").value;
         const first_name = document.getElementById("fn").value;
         const gender = document.getElementById("gender").value;
@@ -381,6 +388,7 @@
           phone_number,
           guardian_ln,
           guardian_fn,
+          guardian_id,
           first_name,
           attendance,
           last_name,
