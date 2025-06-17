@@ -43,6 +43,6 @@ export function Guardian() {
       [this.id]
     );
 
-    return { results, success: results.length > 0 };
+    return results.length > 0;
   };
 }
