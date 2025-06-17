@@ -41,7 +41,7 @@ export function Registrant() {
       const { results } = await executeQuery(
         `SELECT r.*, 
         g.first_name as guardian_first_name, 
-        g.last_name as guardian_last_name
+        g.last_name as guardian_last_name,
         g.phone_number as guardian_phone_number
         FROM registrant as r
         JOIN guardian as g
@@ -50,6 +50,7 @@ export function Registrant() {
         ORDER BY first_name ASC`,
         []
       );
+
       return results;
     } catch (error) {
       console.error(error);

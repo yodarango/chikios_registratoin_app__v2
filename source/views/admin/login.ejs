@@ -68,7 +68,7 @@
         };
 
         try {
-          const req = await fetch("/admin/login", {
+          const req = await fetch("/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -78,8 +78,8 @@
 
           const res = await req.json();
 
-          if (res?.token) {
-            document.cookie = `authorization=${res.token}; expires=Thu, 18 Dec 2043 12:00:00 UTC; path=/`;
+          if (res.data?.token) {
+            document.cookie = `authorization=${res.data.token}; expires=Thu, 18 Dec 2043 12:00:00 UTC; path=/`;
 
             window.location.href = "/admin";
           } else {

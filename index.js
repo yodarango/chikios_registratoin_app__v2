@@ -30,7 +30,6 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-app.use("/admin", requestLogger, publicRouter);
 app.use("/admin", requestLogger, authenticateToken, privateRouter);
 app.use("/", requestLogger, indexRouter);
 
