@@ -21,8 +21,8 @@ publicRouter.post("/login", async (req, res) => {
 
   try {
     if (
-      req?.body?.username.toLowerCase() === process.env &&
-      req?.body?.password === ""
+      req?.body?.username.toLowerCase() === process.env.ADMIN_USERNAME &&
+      req?.body?.password === process.env.ADMIN_PASSWORD
     ) {
       const token = await authenticateToken({
         username: req?.body?.username,
@@ -63,21 +63,19 @@ publicRouter.post("/new", async (req, res) => {
     const registrantExists = await registrant.checkIfRegistrantExists();
 
     // only create a new record for the registrant and guardian if they don't exist
-    let newRegistrantId = null;
     let registrantSuccess = false;
 
     if (registrantExists) {
       const registrantUpdate = await registrant.update();
-      newRegistrantId = registrantUpdate.updatedRegistrantId;
       registrantSuccess = registrantUpdate.success;
     } else {
       const registrantSave = await registrant.save();
-      newRegistrantId = registrantSave.newRegistrantId;
+      registrant.id = registrantSave.newRegistrantId;
       registrantSuccess = registrantSave.success;
     }
 
     // attach this registrant to the guardian
-    guardian.registrant_id = newRegistrantId;
+    guardian.registrant_id = registrant.id;
 
     if (!registrantSuccess) {
       createResponse(res, {
@@ -107,7 +105,7 @@ publicRouter.post("/new", async (req, res) => {
       return;
     }
 
-    createResponse(res, { data: req.body, error: null, success: true });
+    createResponse(res, { data: registrant, error: null, success: true });
   } catch (error) {
     console.error(error);
     createResponse(res, { data: null, error: error, success: false });

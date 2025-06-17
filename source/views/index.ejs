@@ -52,7 +52,8 @@
                   class="form_input p-3 bg-info-subtle rounded-3 w-100"
                   id="fn"
                   onkeydown="filterRegistrants()"
-                  onfocus="displayDropdown()"
+                  onblur="handleBlur()"
+                  onFocus="handleFocus()"
                 />
               </div>
             </div>
@@ -259,26 +260,54 @@
         dropdown.style.display = "none";
       }
 
+      function handleFocus() {
+        const registratnNameInput = document.getElementById("fn");
+        if (registratnNameInput.value.length > 0) {
+          displayDropdown();
+        }
+      }
+
+      function handleBlur() {
+        setTimeout(() => {
+          hideDropdown();
+        }, 200);
+      }
+
       function filterRegistrants() {
         const input = document.getElementById("fn");
         const dropdown = document.querySelector(".registrants-dropdown");
-        const buttons = dropdown.querySelectorAll("button");
+        const buttons = Array.from(dropdown.querySelectorAll("button"));
 
-        buttons.forEach((button) => {
+        // only if the dropdown is not showing already, display it
+        if (dropdown.style.display !== "block") {
+          displayDropdown();
+        }
+
+        const nonMatches = [];
+        const totalMatches = buttons.filter((button) => {
           const name = button.querySelector("p").getAttribute("data-value");
-
-          if (name.toLowerCase().includes(input.value.toLowerCase())) {
-            button.style.display = "block";
-          } else {
-            button.style.display = "none";
-          }
+          const isMatch = name
+            .toLowerCase()
+            .includes(input.value.toLowerCase());
+          if (!isMatch) nonMatches.push(button);
+          return isMatch;
         });
+
+        for (let match of totalMatches) {
+          match.style.display = "block";
+        }
+
+        for (let nonMatch of nonMatches) {
+          nonMatch.style.display = "none";
+        }
+
+        if (totalMatches.length === 0) {
+          hideDropdown();
+        }
       }
 
       // fill out all the inputs with the registrant data
       function chooseRegistrant(registrant) {
-        hideDropdown();
-
         // Fill out the inputs with the registrant data
         document.getElementById("fn").value = registrant.first_name;
         document.getElementById("ln").value = registrant.last_name;
@@ -295,7 +324,6 @@
         // if they are choosing a child or guardian that is already registered
         // we need the id to look them up
         document.getElementById("id").value = registrant.id;
-        registrant.guardian_phone_number;
         document.getElementById("gid").value = registrant.guardian_id;
 
         const selectRegistrantAlert = document.querySelector(
@@ -303,6 +331,8 @@
         );
 
         selectRegistrantAlert.style.display = "block";
+
+        hideDropdown();
       }
     </script>
 

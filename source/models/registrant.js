@@ -19,7 +19,6 @@ export function Registrant() {
         `SELECT r.*, 
         g.first_name as guardian_first_name, 
         g.last_name as guardian_last_name, 
-        g.phone_number as guardian_phone_number,
         g.id as guardian_id
         FROM registrant as r
         JOIN guardian as g
@@ -43,11 +42,11 @@ export function Registrant() {
         `SELECT r.*, 
         g.first_name as guardian_first_name, 
         g.last_name as guardian_last_name
-        // g.phone_number as guardian_phone_number
+        g.phone_number as guardian_phone_number
         FROM registrant as r
         JOIN guardian as g
         ON r.id = g.registrant_id
-        WHERE r.attendance LIKE '%NYC.2024%'
+        WHERE r.attendance LIKE '%GMC.2025%'
         ORDER BY first_name ASC`,
         []
       );
