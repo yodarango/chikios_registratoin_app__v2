@@ -180,3 +180,35 @@ button {
 .registrants-dropdown p {
   text-align: left;
 }
+
+.round-button {
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 4.5rem;
+  width: 4.5rem;
+  display: flex;
+  border: none;
+}
+
+button.btn {
+  padding: var(--dr-spacing-2) var(--dr-spacing-4);
+  border-radius: var(--dr-spacing-8);
+}
+
+.button-primary {
+  background-image: linear-gradient(
+    to bottom,
+    var(--dr-epsilon),
+    var(--dr-zeta)
+  );
+  color: var(--dr-alpha);
+}
+
+.button-secondary {
+  box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1), 0 0 0.2rem rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(var(--dr-alpha-rgb), 0.25);
+  background: rgba(var(--dr-alpha-rgb), 0.2);
+  backdrop-filter: blur(0.5rem);
+  color: var(--dr-alpha);
+}

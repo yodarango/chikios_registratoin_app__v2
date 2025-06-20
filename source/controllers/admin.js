@@ -5,6 +5,7 @@ const publicRouter = express.Router();
 const privateRouter = express.Router();
 import express from "express";
 
+// updates the registrant with the data incoming from the body
 privateRouter.put("/update/registrant/:id", async (req, res) => {
   try {
     const registrant = new Registrant();

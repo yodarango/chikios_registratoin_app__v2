@@ -32,16 +32,37 @@
       </div>
       <div class="w-100 d-flex align-items-center justify-content-start mb-5">
         <input
-          class="form_input p-3 bg-info-subtle rounded-3 w-100 me-3"
+          class="form_input p-3 bg-info-subtle rounded-3 w-100"
           placeholder="Search by last name"
           onkeyup="handleSearchRegistrantByNameOrId()"
           type="text"
           id="search"
         />
       </div>
+
+      <div
+        class="d-flex align-items-center justify-content-start tw-gap-3 mb-4"
+      >
+        <button
+          class="ms-3 btn bg-iota w-100"
+          id="girl-filter"
+          onclick="handleFilterRegistrantsByGender(2)"
+        >
+          Girls
+        </button>
+        <button
+          class="ms-3 btn bg-lambda w-100"
+          id="boy-filter"
+          onclick="handleFilterRegistrantsByGender(1)"
+        >
+          Boys
+        </button>
+      </div>
+
       <div id="registrants-table">
         <% registrants.forEach(registrant => { %>
         <div
+          data-registrant-gender="<%= registrant.gender%>"
           data-registrant-name="<%= registrant.first_name %> <%= registrant.last_name %>"
           data-registrant-checked-in="<%= registrant.checked_in > 0%>"
           data-registrant-id="<%= registrant.id %>"
@@ -94,6 +115,62 @@
   </body>
 
   <script>
+    let actualGender;
+
+    function handleFilterRegistrantsByGender(gender) {
+      const boyButton = document.querySelector("#boy-filter");
+      const girlButton = document.querySelector("#girl-filter");
+
+      actualGender = actualGender === gender ? null : gender;
+
+      const isBoy = actualGender === 1;
+      const isGirl = actualGender === 2;
+      const registrantCards = Array.from(
+        document.querySelectorAll("[data-registrant-id]")
+      );
+
+      let totalCount = registrantCards.length;
+
+      // add opacity to the other button
+      if (isGirl) {
+        boyButton.classList.add("opacity-50");
+        girlButton.classList.remove("opacity-50");
+
+        registrantCards.forEach((card) => {
+          card.classList.remove("d-none");
+          if (card.getAttribute("data-registrant-gender") === "1") {
+            totalCount--;
+            card.classList.add("d-none");
+          }
+        });
+      } else if (isBoy) {
+        boyButton.classList.remove("opacity-50");
+        girlButton.classList.add("opacity-50");
+
+        registrantCards.forEach((card) => {
+          card.classList.remove("d-none");
+          if (card.getAttribute("data-registrant-gender") === "2") {
+            totalCount--;
+            card.classList.add("d-none");
+          }
+        });
+      } else {
+        boyButton.classList.remove("opacity-50");
+        girlButton.classList.remove("opacity-50");
+
+        girlButton.classList.add("opacity-50");
+        boyButton.classList.add("opacity-50");
+
+        registrantCards.forEach((card) => {
+          card.classList.remove("d-none");
+        });
+      }
+
+      document.querySelector(
+        "#count h1 span:last-child"
+      ).innerHTML = `${totalCount}`;
+    }
+
     // filters the registrants by search
     async function handleSearchRegistrantByNameOrId(event, registrants) {
       const registrantCards = Array.from(

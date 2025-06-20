@@ -44,8 +44,9 @@ export function Registrant() {
         g.last_name as guardian_last_name,
         g.phone_number as guardian_phone_number
         FROM registrant as r
-        LEFT JOIN guardian as g
+        JOIN guardian as g
         ON r.id = g.registrant_id
+        WHERE r.attendance LIKE '%GMC.2025%'
         ORDER BY first_name ASC`,
         []
       );
@@ -60,8 +61,7 @@ export function Registrant() {
   this.getSingleRegistrantById = async function () {
     try {
       const { results } = await executeQuery(
-        `
-      SELECT r.*, 
+        `SELECT r.*, 
       g.first_name as guardian_first_name, 
       g.last_name as guardian_last_name, 
       g.phone_number as guardian_phone_number
