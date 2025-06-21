@@ -51,11 +51,25 @@
           Girls
         </button>
         <button
-          class="ms-3 btn bg-lambda w-100"
+          class="ms-3 btn bg-lambda w-100 color-beta"
           id="boy-filter"
           onclick="handleFilterRegistrantsByGender(1)"
         >
           Boys
+        </button>
+        <button
+          class="ms-3 btn bg-danger w-100"
+          id="boy-filter"
+          onclick="handleFilterRegistrantsBySatus(false)"
+        >
+          OUT
+        </button>
+        <button
+          class="ms-3 btn bg-success w-100 color-beta"
+          id="girl-filter"
+          onclick="handleFilterRegistrantsByStatus(true)"
+        >
+          IN
         </button>
       </div>
 
