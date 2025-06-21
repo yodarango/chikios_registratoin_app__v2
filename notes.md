@@ -1,3 +1,7 @@
+# LEFT OFF:
+
+Oh fermato in index.ejs dove ero aggiungendo due pulsanti addizionali "IN" e "OUT" che permettono filtrare i resultati dei registrants. C'e anche un altro ramo dove stavo iniziando il processo di lasciare altre chiese di usare questa app.
+
 # TO DO:
 
 - add a phone number clean up function in the BE so that the <a tel:#></a> can direct the user dierctly to their messaging application
