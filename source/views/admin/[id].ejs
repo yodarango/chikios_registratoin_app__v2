@@ -2,229 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="/css/fullds.min.css" />
+    <link rel="stylesheet" href="/css/fullds.min.css" />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/app.css" />
-    <title>Registrant</title>
+    <link rel="stylesheet" href="/css/redesign.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/notifications.css" />
+    <script src="/js/notifications.js" defer></script>
+    <title>Registrant details | Kidz Quest</title>
+    <script src="/js/admin.js" defer></script>
   </head>
-  <body>
-    <main>
-      <section id="view">
-        <h3 class="mb-4 mx-0 fs-2">Child</h3>
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p
-              style="font-size: 16px"
-              class="chikios-paragraph me-3 flex-shrink-0 text-left"
-            >
-              First name:
-            </p>
-          </div>
-          <div class="w-100">
-            <input
-              class="form_input p-3 bg-info-subtle rounded-3 w-100"
-              value="<%=registrant.first_name%>"
-              placeholder="Enter first name"
-              type="text"
-              readonly
-              id="fn"
-            />
-          </div>
-        </div>
-
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p
-              style="font-size: 16px"
-              class="chikios-paragraph me-3 flex-shrink-0 text-left"
-            >
-              Last name:
-            </p>
-          </div>
-          <div class="w-100">
-            <input
-              type="text"
-              placeholder="Enter first name"
-              class="form_input p-3 bg-info-subtle rounded-3 w-100"
-              id="fn"
-              value="<%=registrant.last_name%>"
-              readonly
-            />
-          </div>
-        </div>
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p
-              style="font-size: 16px"
-              class="chikios-paragraph me-3 flex-shrink-0 text-left"
-            >
-              Age:
-            </p>
-          </div>
-          <div class="w-100">
-            <input
-              type="number"
-              placeholder="0"
-              class="form_input-number p-3 rounded-3"
-              id="age"
-              max="11"
-              min="4"
-              value="<%=registrant.age%>"
-              readonly
-            />
-          </div>
-        </div>
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p
-              style="font-size: 16px"
-              class="chikios-paragraph my-0 me-3 flex-shrink-0 text-left"
-            >
-              Gender:
-            </p>
-          </div>
-          <div class="w-100 d-flex align-items-center justify-content-start">
-            <button
-              id="<%=registrant.gender === 1 ? 'malebtn' : 'femalebtn'%>"
-              class="rounded-2 me-3 btn active"
-            >
-              M
-            </button>
-          </div>
-        </div>
-
-        <h3 class="mb-4 mx-0 fs-2">Guardian</h3>
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p
-              style="font-size: 16px"
-              class="chikios-paragraph me-3 flex-shrink-0 text-left"
-            >
-              First name:
-            </p>
-          </div>
-          <div class="w-100">
-            <input
-              type="text"
-              placeholder="Enter first name"
-              class="form_input p-3 bg-info-subtle rounded-3 w-100"
-              id="fn"
-              value="<%=registrant.guardian_first_name%>"
-              readonly
-            />
-          </div>
-        </div>
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p
-              style="font-size: 16px"
-              class="chikios-paragraph me-3 flex-shrink-0 text-left"
-            >
-              Last name:
-            </p>
-          </div>
-          <div class="w-100">
-            <input
-              type="text"
-              placeholder="Enter first name"
-              class="form_input p-3 bg-info-subtle rounded-3 w-100"
-              id="fn"
-              value="<%=registrant.guardian_last_name%>"
-              readonly
-            />
-          </div>
-        </div>
-        <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
-          <div style="min-width: 100px">
-            <p s="" class="chikios-paragraph me-3 flex-shrink-0 text-left">
-              Phone #:
-            </p>
-          </div>
-          <div class="w-100">
-            <a
-              class="form_input p-3 rounded-3 w-100"
-              href="tel:<%=registrant.guardian_phone_number%>"
-              ><%=registrant.guardian_phone_number%></a
-            >
-          </div>
-        </div>
+  <% const checkedIn = Number(registrant.checked_in) > 0; %>
+  <body class="admin-page">
+    <header class="admin-header"><div class="admin-header-inner"><a href="/" class="admin-logo" aria-label="Kidz Quest home"><img src="/images/logo.png" alt="Kidz Quest" /></a><div class="admin-header-right"><span class="admin-team-label"><span aria-hidden="true">✦</span> STAFF SPACE</span><a class="admin-home-link" href="/">Registration page <span aria-hidden="true">↗</span></a></div></div></header>
+    <main class="admin-main admin-detail-main">
+      <a class="back-link" href="/admin">← <span>Back to registrations</span></a>
+      <div class="admin-welcome detail-welcome"><div><span class="admin-eyebrow"><span></span> REGISTRANT DETAILS</span><h1>A little adventurer<span class="admin-coral">.</span></h1><p>Everything you need to know for a smooth pickup.</p></div><span class="welcome-sun" aria-hidden="true">✿</span></div>
+      <section class="detail-card" data-registrant-id="<%= registrant.id %>" data-registrant-name="<%= registrant.first_name %> <%= registrant.last_name %>" data-registrant-checked-in="<%= checkedIn %>">
+        <div class="detail-profile"><span class="registrant-avatar detail-avatar" aria-hidden="true"><%= (registrant.first_name || '?').charAt(0).toUpperCase() %></span><div><h2><%= registrant.first_name %> <%= registrant.last_name %></h2><p>Pickup code <strong>#<%= registrant.id %></strong></p></div><span class="status-pill <%= checkedIn ? 'is-in' : 'is-out' %>" data-status-label><span aria-hidden="true"></span><%= checkedIn ? 'Checked in' : 'Checked out' %></span></div>
+        <div class="detail-section"><div class="detail-section-heading"><span class="detail-icon detail-icon-green">01</span><div><h3>Child details</h3><p>A little about your adventurer.</p></div></div><dl class="detail-grid"><div><dt>First name</dt><dd><%= registrant.first_name %></dd></div><div><dt>Last name</dt><dd><%= registrant.last_name %></dd></div><div><dt>Age</dt><dd><%= registrant.age %></dd></div><div><dt>Gender</dt><dd><%= Number(registrant.gender) === 1 ? 'Boy' : Number(registrant.gender) === 2 ? 'Girl' : 'Not specified' %></dd></div></dl></div>
+        <div class="detail-section"><div class="detail-section-heading"><span class="detail-icon detail-icon-coral">02</span><div><h3>Guardian details</h3><p>Contact information for their grown-up.</p></div></div><dl class="detail-grid"><div><dt>First name</dt><dd><%= registrant.guardian_first_name || '—' %></dd></div><div><dt>Last name</dt><dd><%= registrant.guardian_last_name || '—' %></dd></div><div class="detail-full"><dt>Phone number</dt><dd><% if (registrant.guardian_phone_number) { %><a href="tel:<%= registrant.guardian_phone_number %>"><%= registrant.guardian_phone_number %> ↗</a><% } else { %>—<% } %></dd></div></dl></div>
+        <div class="detail-action-row"><div><strong>Ready to update their status?</strong><p>Keep the roster up to date as children come and go.</p></div><button type="button" class="status-action <%= checkedIn ? 'action-out' : 'action-in' %>" data-status-action aria-label="<%= checkedIn ? 'Check out' : 'Check in' %> <%= registrant.first_name %> <%= registrant.last_name %>"><%= checkedIn ? 'Check out' : 'Check in' %></button></div>
       </section>
-      <button
-        id="check-status"
-        onclick="handleCheckInOrOutRegistrant('<%=registrant.id%>', '<%=registrant.checked_in%>')"
-        class="w-100 btn p-3 d-flex align-items-center justify-content-center mb-5 <%= !registrant.checked_in ? 'bg-danger' : 'bg-success' %>"
-      >
-        <b class="fw-bold me-4"
-          ><%= !registrant.checked_in ? 'Checked out' : 'Checked in'%></b
-        >
-      </button>
+      <footer class="admin-footer">MADE WITH <span>♥</span> FOR LITTLE ADVENTURES</footer>
     </main>
-
-    <!-- check status -->
-    <script>
-      async function handleCheckInOrOutRegistrant(id, status) {
-        const isCheckIn = Boolean(status);
-
-        if (!id) return;
-
-        const registrantIdBtn = document.getElementById(`check-status`);
-
-        const registrantIdText = registrantIdBtn.querySelector(`b`);
-
-        registrantIdBtn.classList.remove(
-          "bg-danger",
-          "bg-success",
-          "font-gamma"
-        );
-        registrantIdText.textContent = "Processing...";
-        registrantIdBtn.classList.add("bg-rho");
-
-        const path = `/admin/${isCheckIn ? "check-in" : "check-out"}/` + id;
-
-        try {
-          const req = await fetch(path, {
-            method: "POST",
-          });
-          const res = await req.json();
-
-          if (!res.success) {
-            alert("An error occurred, please try again.");
-            return;
-          }
-
-          if (isCheckIn) {
-            registrantIdBtn.setAttribute(
-              "onclick",
-              `handleCheckInOrOutRegistrant(${id}, ${false})`
-            );
-            registrantIdBtn.classList.remove("d-none");
-            registrantIdText.textContent = "Checked in";
-
-            registrantIdBtn.classList.add(
-              "color-gamma",
-              "bg-success",
-              "d-block"
-            );
-          } else {
-            registrantIdBtn.setAttribute(
-              "onclick",
-              `handleCheckInOrOutRegistrant(${id}, ${true})`
-            );
-            registrantIdBtn.classList.remove("d-none", "color-gamma");
-            registrantIdText.textContent = "Checked out";
-
-            registrantIdBtn.classList.add(
-              "d-block",
-              "bg-danger",
-              "color-alpha"
-            );
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    </script>
   </body>
 </html>

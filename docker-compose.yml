@@ -15,7 +15,7 @@ services:
 
   chikios_db:
     container_name: chikios_db
-    image: mysql:latest
+    image: mysql:9.3
     environment:
       MYSQL_ROOT_PASSWORD: my5ql_ch1k1o5*
       MYSQL_DATABASE: chikios

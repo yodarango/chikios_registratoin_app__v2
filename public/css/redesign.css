@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+:root { --ink: #243b38; --muted: #778a7f; --green: #286b52; --coral: #ef806a; --cream: #fffdf7; --line: #e8ede5; }
+* { box-sizing: border-box; }
+html { font-size: 10px; }
+body { margin: 0; background: #f6f8ec !important; color: var(--ink) !important; font-family: 'DM Sans', sans-serif; font-size: 1.4rem; line-height: 1.5; }
+button, input, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid #efaa65 !important; outline-offset: 3px; }
+.page-shell { display: grid; grid-template-columns: minmax(350px, 46%) minmax(0, 54%); min-height: 100vh; }
+.story-panel { position: sticky; top: 0; height: 100vh; min-height: 680px; overflow: hidden; background: #80b1a1; }
+.story-background { position: absolute; inset: 0; background: url('/images/kids2.webp') center center / cover no-repeat; }
+.story-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,55,49,.37) 0%, rgba(18,55,48,.08) 33%, rgba(16,46,38,.1) 52%, rgba(16,46,38,.7) 100%); }
+.story-content { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 4.8rem 5.5rem 3.5rem; color: white; }
+.brand { display: inline-flex; align-items: center; gap: 1rem; width: fit-content; text-decoration: none; font-family: Outfit, sans-serif; font-size: 3rem; font-weight: 800; letter-spacing: -.1rem; color: var(--green); }
+.brand-light { color: white; }
+.brand-logo { display: block; width: 14rem; height: auto; }
+.brand-light .brand-logo { padding: .7rem; border-radius: 1.2rem; background: rgba(255,253,247,.94); }
+.brand-dot, .heading-dot { color: #f18b71; }
+.story-copy { margin-top: auto; margin-bottom: 4rem; max-width: 49rem; }
+.story-kicker, .eyebrow { display: inline-flex; align-items: center; gap: .8rem; font-size: 1.1rem; font-weight: 800; letter-spacing: .16em; }
+.story-kicker { padding: .9rem 1.3rem; border: 1px solid rgba(255,255,255,.55); border-radius: 100px; background: rgba(30,70,56,.25); }
+.story-kicker span { color: #ffde83; }
+.story-copy h1 { margin: 2.2rem 0 1.7rem; color: white; font-family: Outfit, sans-serif; font-size: clamp(5rem, 5.5vw, 8.2rem); line-height: .98; letter-spacing: -.055em; font-weight: 800; }
+.story-copy h1 em { color: #ffdf84; font-style: normal; }
+.story-copy p { max-width: 34rem; color: rgba(255,255,255,.95); font-size: 1.6rem; line-height: 1.6; }
+.story-badge { display: inline-flex; gap: .8rem; align-items: center; margin-top: 2.8rem; font-size: 1rem; font-weight: 800; letter-spacing: .14em; }
+.story-badge span { color: #ffdb77; font-size: 2.1rem; }
+.story-footer { margin: 0; color: rgba(255,255,255,.88); font-size: 1.2rem; font-weight: 600; }
+.story-footer span { color: #ffd473; margin-left: .5rem; }
+.registration-main { width: 100%; max-width: none; margin: 0; min-height: 100vh; display: flex; flex-direction: column; background: var(--cream); }
+.registration-content { width: min(100% - 8rem, 56rem); margin: auto; padding: 5.3rem 0 4rem; }
+.form-topline { display: flex; align-items: center; justify-content: space-between; }
+.eyebrow { color: #748f78; font-size: 1rem; }
+.eyebrow-dot { width: .8rem; height: .8rem; border-radius: 50%; background: #f2b65e; }
+.little-sparkle { color: #eebc64; font-size: 2.3rem; }
+.page-title { margin: 1rem 0 .6rem; font-family: Outfit, sans-serif; font-size: clamp(3.8rem, 3.3vw, 5rem); font-weight: 800; line-height: 1.08; letter-spacing: -.045em; color: #243d37; }
+.page-intro { margin: 0; color: #76867b; font-size: 1.45rem; }
+.event-note { display: flex; align-items: center; gap: 1.4rem; margin: 2.6rem 0 3rem; padding: 1.5rem 1.7rem; border: 1px solid #f6e4bb; border-radius: 1.4rem; background: #fff8e8; }
+.event-note-icon { flex: 0 0 auto; display: grid; place-items: center; width: 3.7rem; height: 3.7rem; border-radius: 1.2rem; color: #bd8139; background: #ffedc5; font-size: 2.4rem; }
+.event-note strong { display: block; color: #7e5b32; font-size: 1.25rem; }
+.event-note p { margin: .2rem 0 0; color: #987e5c; font-size: 1.2rem; }
+.select-registrant-alert { display: none; margin: 0 0 2rem; padding: 1.2rem 1.5rem; border-radius: 1rem; background: #fff1dc; color: #78572c; }
+.section-heading { display: flex; align-items: center; gap: 1.2rem; margin: 0 0 2rem; }
+.section-number { display: grid; place-items: center; width: 4rem; height: 4rem; flex: 0 0 auto; border-radius: 1.3rem; background: #e4f1e4; color: #4b8a63; font-family: Outfit, sans-serif; font-weight: 800; font-size: 1.3rem; }
+.section-number-coral { background: #ffebe4; color: #da806f; }
+.section-heading h3 { margin: 0; color: #2d443c; font-family: Outfit, sans-serif; font-size: 1.8rem; font-weight: 700; line-height: 1.15; }
+.section-heading p { margin: .3rem 0 0; color: #8a9990; font-size: 1.2rem; }
+.section-art { margin-left: auto; color: #a3c694; font-size: 2.6rem; }
+.section-art-coral { color: #f3a899; }
+.guardian-heading { margin-top: 3.2rem; padding-top: 3rem; border-top: 1px dashed #dfe8dd; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem 1.5rem; }
+.field { min-width: 0; }
+.field-full { grid-column: 1 / -1; }
+.field label, .field-label { display: block; margin-bottom: .7rem; color: #415a4f; font-size: 1.2rem; font-weight: 700; }
+.label-hint { color: #a2aea4; font-weight: 500; }
+.field .form_input, .field .form_input-number, .staff-card .form_input, .staff-card .form_input-number { display: block; width: 100%; height: 4.8rem; padding: 0 1.4rem !important; border: 1px solid #e1e9df !important; border-radius: 1rem !important; background: #fafcf7 !important; color: #2e453c !important; outline: none; font-size: 1.3rem; transition: border-color .2s, box-shadow .2s; }
+.field .form_input::placeholder, .field .form_input-number::placeholder, .staff-card .form_input::placeholder { color: #aab8ab !important; opacity: 1; }
+.field .form_input:focus, .field .form_input-number:focus, .staff-card .form_input:focus { border-color: #8dbda0 !important; box-shadow: 0 0 0 3px rgba(96,155,111,.13); }
+.field-help { margin: .7rem 0 0; color: #9aa99b; font-size: 1.1rem; }
+.gender-options { display: flex; gap: .8rem; }
+.gender-options #malebtn, .gender-options #femalebtn { width: 100%; height: 4.8rem; border: 1px solid #e1e9df !important; border-radius: 1rem !important; background: #fafcf7 !important; color: #718578 !important; font-size: 1.25rem; font-weight: 700; }
+.gender-options #malebtn.active, .gender-options #femalebtn.active { border-color: #6eaa83 !important; background: #eaf5e9 !important; color: #337454 !important; }
+.autocomplete-field { position: relative; }
+.registrants-dropdown { position: absolute; z-index: 5; top: 100%; left: 0; right: 0; max-height: 20rem; overflow-y: auto; margin-top: .5rem; border: 1px solid #dfebdd; border-radius: 1rem; background: white; box-shadow: 0 12px 30px rgba(43,76,55,.13); }
+.registrants-dropdown button { display: block; width: 100%; padding: 1.1rem 1.4rem; border: 0; background: white; color: var(--ink); text-align: left; }
+.registrants-dropdown button:hover { background: #edf7eb; }
+.registrants-dropdown p { margin: 0; }
+.register-button { display: flex; align-items: center; justify-content: center; gap: 1rem; width: 100%; min-height: 5.3rem; margin-top: 2.7rem; padding: 1.2rem 2rem; border: 0; border-radius: 1.2rem; background: #367a59; color: white; font-weight: 800; box-shadow: 0 .6rem 0 #286648; transition: transform .2s, background .2s; }
+.register-button:hover { background: #2a694b; transform: translateY(-2px); }
+.register-button:disabled { transform: none; box-shadow: none; }
+.button-arrow { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: rgba(255,255,255,.17); font-size: 1.5rem; }
+.form-footnote { margin: 1.9rem 0 0; color: #a0afa2; font-size: 1.1rem; text-align: center; }
+.form-footnote span { color: #eeb35d; }
+.page-footer { display: flex; justify-content: space-between; gap: 1rem; width: min(100% - 8rem, 56rem); margin: 0 auto; padding: 0 0 2.5rem; color: #b1bcb0; font-size: .95rem; font-weight: 700; letter-spacing: .08em; }
+.page-footer a { color: #81988a; text-decoration: none; letter-spacing: 0; }
+.footer-heart { color: #efaa98; }
+.mobile-brand { display: none; }
+
+/* Supporting pages share the same sunny, legible visual language. */
+.support-page { min-height: 100vh; padding: 3rem 2rem; background: linear-gradient(rgba(35,73,52,.38), rgba(35,73,52,.45)), url('/images/kids2.webp') center / cover fixed !important; }
+.support-page main { width: min(100%, 55rem); max-width: none; margin: 4rem auto; }
+.staff-card { padding: clamp(2.5rem, 5vw, 4.5rem); border: 1px solid rgba(255,255,255,.7); border-radius: 2.4rem; background: #fffdf7; box-shadow: 0 20px 60px rgba(29,61,40,.22); }
+.staff-card h1, .staff-card h3 { color: #2d443c; font-family: Outfit, sans-serif; }
+.staff-card a { color: #347b59; }
+.support-brand { display: flex; margin-bottom: 2.5rem; }
+.support-title { margin: 0 0 .8rem; font-family: Outfit, sans-serif; font-size: 3.8rem; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+.support-intro { margin: 0 0 2.5rem; color: #819287; }
+.staff-card .chikios-paragraph { color: #415a4f; font-size: 1.25rem !important; font-weight: 700; }
+.staff-card .btn, .staff-card #check-status { border-radius: 1rem !important; font-weight: 700; }
+.staff-card .card { border: 1px solid #e4ede2 !important; border-radius: 1.3rem !important; background: #f8fbf5 !important; }
+.staff-card .card h3 { color: #2d443c; }
+.staff-card .card .bg-beta { background: #e8f3e6 !important; border: 0 !important; }
+.staff-card #count h1 { border-color: #e2eadf !important; }
+.staff-card .form_input[readonly] { background: #f4f8f0 !important; }
+.success-icon { display: grid; place-items: center; width: 7rem; height: 7rem; margin: 0 auto 2rem; border-radius: 2.3rem; background: #e8f5e6; color: #4b9870; font-size: 3.5rem; }
+.success-card { text-align: center; }
+.success-card .support-brand { margin-left: auto; margin-right: auto; }
+.success-card .registrant-save-code { margin: 0; border: 2px dashed #bbd8b9; border-radius: 1.6rem; background: #f5faf0; color: #347b59; font-family: Outfit, sans-serif; font-size: clamp(5rem, 15vw, 9rem); }
+.success-card #code-container { margin: 2.2rem 0 !important; }
+.success-card #code-container p { color: #718a7a; }
+.success-card .security-note { margin: 1.5rem 0 2rem; color: #b4775f; font-weight: 700; }
+.success-card .register-button { margin-top: 2rem; }
+@media (max-width: 850px) {
+  .page-shell { display: block; }
+  .story-panel { position: relative; height: 34rem; min-height: 0; }
+  .story-background { background-position: center 43%; }
+  .story-content { padding: 2.5rem 3rem; }
+  .story-content > .brand, .story-footer, .story-badge { display: none; }
+  .story-copy { margin: auto 0 0; }
+  .story-copy h1 { margin: 1rem 0 .8rem; font-size: 5rem; }
+  .story-copy p { font-size: 1.35rem; max-width: 32rem; }
+  .story-kicker { font-size: .9rem; padding: .7rem 1rem; }
+  .registration-main { min-height: auto; }
+  .mobile-brand { display: flex; justify-content: space-between; align-items: center; padding: 1.8rem 3rem; border-bottom: 1px solid #edf1e8; color: #a5b5a4; font-size: 1rem; font-weight: 800; letter-spacing: .1em; }
+  .mobile-brand .brand { font-size: 2.5rem; }
+  .mobile-brand .brand-logo { width: 11rem; }
+  .registration-content { padding-top: 4rem; }
+}
+@media (max-width: 480px) {
+  .story-content { padding: 2rem; }
+  .story-copy h1 { font-size: 4.2rem; }
+  .mobile-brand { padding: 1.5rem 2rem; }
+  .registration-content, .page-footer { width: calc(100% - 4rem); }
+  .registration-content { padding-top: 3rem; }
+  .form-grid { gap: 1.6rem 1rem; }
+  .event-note { align-items: flex-start; }
+  .event-note p { line-height: 1.5; }
+  .page-footer { font-size: .8rem; }
+  .support-page { padding: 1.5rem; }
+  .support-page main { margin: 2rem auto; }
+}
+@media (max-width: 767px) {
+  .story-panel { position: sticky; top: 0; height: 50vh; }
+  .story-background { inset: -15% 0; }
+  .registration-main { position: relative; z-index: 2; }
+}

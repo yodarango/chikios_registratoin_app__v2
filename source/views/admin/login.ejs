@@ -6,21 +6,28 @@
     <link rel="stylesheet" type="text/css" href="/css/fullds.min.css" />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/css/redesign.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/notifications.css" />
+    <script src="/js/notifications.js" defer></script>
     <title>Login</title>
   </head>
-  <body>
-    <main>
+  <body class="support-page admin-login">
+    <main class="staff-card">
+      <a class="brand support-brand" href="/" aria-label="Kidz Quest home"><img class="brand-logo" src="/images/logo.png" alt="Kidz Quest" /></a>
+      <span class="eyebrow">A LITTLE SPACE FOR OUR TEAM</span>
+      <h1 class="support-title">Welcome back<span class="heading-dot">.</span></h1>
+      <p class="support-intro">Sign in to manage your little adventurers.</p>
       <div
-        style="margin-top: 20rem"
         class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4"
       >
         <div style="min-width: 100px">
-          <p
+          <label for="username"
             style="font-size: 16px"
             class="chikios-paragraph me-3 flex-shrink-0 text-left"
           >
             Username
-          </p>
+          </label>
         </div>
         <div class="w-100">
           <input
@@ -33,12 +40,12 @@
       </div>
       <div class="d-flex align-items-center flex-nowrap flex-wrap w-100 mb-4">
         <div style="min-width: 100px">
-          <p
+          <label for="password"
             style="font-size: 16px"
             class="chikios-paragraph me-3 flex-shrink-0 text-left"
           >
             Password
-          </p>
+          </label>
         </div>
         <div class="w-100">
           <input
@@ -46,15 +53,14 @@
             placeholder="Password"
             class="form_input p-3 bg-info-subtle rounded-3 w-100"
             id="password"
-            ]
           />
         </div>
       </div>
       <button
         onclick="handleLogin()"
-        class="w-100 btn bg-zeta d-block mt-5 color-primary"
+        class="register-button"
       >
-        Login
+        Sign in <span class="button-arrow" aria-hidden="true">↗</span>
       </button>
     </main>
 
@@ -83,10 +89,11 @@
 
             window.location.href = "/admin";
           } else {
-            alert("Wrong username or password, please try again!");
+            showToast("Wrong username or password, please try again!", "error");
           }
         } catch (error) {
           console.error(error);
+          showToast("Something went wrong, please try again!", "error");
         }
       }
     </script>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/fullds.min.css" />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/css/redesign.css" />
+    <link rel="stylesheet" href="/css/notifications.css" />
+    <script src="/js/notifications.js" defer></script>
+    <title>Register | Chikios</title>
+  </head>
+  <body class="register-page">
+    <div class="page-shell">
+      <aside class="story-panel" aria-label="Welcome to Chikios">
+        <div class="story-background" aria-hidden="true"></div>
+        <div class="story-overlay"></div>
+        <div class="story-content">
+          <a class="brand brand-light" href="/" aria-label="Kidz Quest home"><img class="brand-logo" src="/images/logo.png" alt="Kidz Quest" /></a>
+          <div class="story-copy">
+            <span class="story-kicker"><span aria-hidden="true">✦</span>2026 NYC KidzQuest</span>
+            <h1>Let the<br /><em>fun</em> begin<span class="heading-dot">!</span></h1>
+            <p>Let’s get your kiddo ready for church.</p>
+            <div class="story-badge"><span aria-hidden="true">☀</span> MADE FOR LITTLE ADVENTURERS</div>
+          </div>
+          <p class="story-footer">A happy place for every little face <span aria-hidden="true">✿</span></p>
+        </div>
+      </aside>
+      <main class="registration-main">
+        <div class="mobile-brand"><a class="brand" href="/" aria-label="Kidz Quest home"><img class="brand-logo" src="/images/logo.png" alt="Kidz Quest" /></a><span>LET’S GET STARTED <span aria-hidden="true">✦</span></span></div>
+        <div class="registration-content">
+          <div class="form-topline"><span class="eyebrow"><span class="eyebrow-dot"></span> EVENT REGISTRATION</span><span class="little-sparkle" aria-hidden="true">✦</span></div>
+          <h2 class="page-title">Child Info<span class="heading-dot">.</span></h2>
+          <p class="page-intro">Give us just few little details, and they’ll be ready right away!</p>
+          <div class="event-note"><span class="event-note-icon" aria-hidden="true">◷</span><div><strong>A little heads-up</strong><p>Doors open at 7:30pm &nbsp;·&nbsp; Pickup is at 9:00</p></div></div>
+          <div class="select-registrant-alert" role="status">Please make sure your phone number is correct.</div>
+          <section id="form-data" aria-label="Registration details">
+            <input type="text" id="img-url" hidden />
+            <input type="text" id="attendance" name="attendance" value="GMC.2025" hidden />
+            <input type="text" id="id" name="id" hidden />
+            <div class="section-heading"><span class="section-number">01</span><div><h3>About your kiddo</h3><p>Tell us a little about your child.</p></div><span class="section-art" aria-hidden="true">✿</span></div>
+            <div class="form-grid">
+              <div class="field autocomplete-field"><label for="fn">First name</label><input type="text" placeholder="e.g. Charlie" class="form_input" id="fn" autocomplete="given-name" oninput="filterRegistrants()" onblur="handleBlur()" onfocus="handleFocus()" /><div class="registrants-dropdown"><% registrants.forEach(function(registrant) { %><button type="button" data-registrant="<%= JSON.stringify({ first_name: registrant.first_name, last_name: registrant.last_name, guardian_first_name: registrant.guardian_first_name, guardian_last_name: registrant.guardian_last_name, guardian_id: registrant.guardian_id, attendance: registrant.attendance, id: registrant.id }) %>" onclick="chooseRegistrant(JSON.parse(this.dataset.registrant))"><p data-value="<%= registrant.first_name %> <%= registrant.last_name %>"><%= registrant.first_name %> <%= registrant.last_name %></p></button><% }); %></div></div>
+              <div class="field"><label for="ln">Last name</label><input type="text" placeholder="e.g. Parker" class="form_input" id="ln" autocomplete="family-name" /></div>
+              <div class="field"><label for="age">Age <span class="label-hint">(4–11 years)</span></label><input type="number" placeholder="Their age" class="form_input-number" id="age" max="11" min="4" /></div>
+              <div class="field"><span class="field-label" id="gender-label">Gender</span><div class="gender-options" role="group" aria-labelledby="gender-label"><input type="number" id="gender" name="gender" value="0" hidden /><button type="button" id="malebtn" aria-pressed="false" onclick="handleGender(1, 'malebtn')">Boy</button><button type="button" id="femalebtn" aria-pressed="false" onclick="handleGender(2, 'femalebtn')">Girl</button></div></div>
+            </div>
+            <div class="section-heading guardian-heading"><span class="section-number section-number-coral">02</span><div><h3>About their grown-up</h3><p>So we can keep in touch with you.</p></div><span class="section-art section-art-coral" aria-hidden="true">♡</span></div>
+            <input type="text" id="gid" name="guardian_id" value="" hidden />
+            <div class="form-grid">
+              <div class="field"><label for="gfn">First name</label><input type="text" placeholder="Your first name" class="form_input" id="gfn" autocomplete="given-name" /></div>
+              <div class="field"><label for="gln">Last name</label><input type="text" placeholder="Your last name" class="form_input" id="gln" autocomplete="family-name" /></div>
+              <div class="field field-full"><label for="gphone">Phone number</label><input type="tel" placeholder="Your best contact number" class="form_input" id="gphone" autocomplete="tel" /><p class="field-help">We’ll use this number to contact you if needed.</p></div>
+            </div>
+            <button type="button" class="register-button" id="register-btn" onclick="handleRegister()"><span>Let’s get registered</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            <p class="form-footnote"><span aria-hidden="true">✦</span> Almost time to make some memories!</p>
+          </section>
+        </div>
+        <footer class="page-footer"><span>MADE WITH <span class="footer-heart">♥</span> FOR LITTLE ADVENTURES</span><a href="/login">Staff login ↗</a></footer>
+      </main>
+    </div>
