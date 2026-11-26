@@ -1,12 +1,5 @@
 export function requestLogger(req, res, next) {
-  console.log(`
-  ************************************************************
-  * METHOD: ${req.method}                                    *
-  * -------------------------------------------------------- *
-  * BODY: ${JSON.stringify(req.body)}                        *
-  * -------------------------------------------------------- *
-  * URL: ${req.url}                                          *
-  ************************************************************
-  `);
+  // Request bodies can contain passwords, phone numbers and children's data.
+  console.log(`${req.method} ${req.path}`);
   next();
 }

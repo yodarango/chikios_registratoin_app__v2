@@ -12,6 +12,7 @@
     <script src="/js/notifications.js" defer></script>
     <title>Registrations | Kidz Quest</title>
     <script src="/js/admin.js" defer></script>
+    <script src="/js/sms-admin.js" defer></script>
   </head>
   <body class="admin-page">
     <header class="admin-header">
@@ -30,6 +31,7 @@
         <div class="stat-card"><span class="stat-icon stat-green" aria-hidden="true">✓</span><div><span class="stat-label">Checked in</span><strong id="in-count"><%= registrants.filter(r => Number(r.checked_in) > 0).length %></strong></div></div>
         <div class="stat-card"><span class="stat-icon stat-coral" aria-hidden="true">↗</span><div><span class="stat-label">Checked out</span><strong id="out-count"><%= registrants.filter(r => !(Number(r.checked_in) > 0)).length %></strong></div></div>
       </section>
+      <section class="sms-event-panel" aria-labelledby="sms-event-title"><div><h2 id="sms-event-title">Pickup reminders</h2><p>Schedule an event date in Nashville time. New registrations will join the next enabled event. Reminders run at 8:45 PM and 9:15 PM for children still checked in.</p><p id="sms-mode" role="status">Loading messaging settings…</p></div><form id="sms-event-form"><label for="sms-event-date">Event date</label><div><input id="sms-event-date" type="date" required /><button type="submit">Enable date</button></div></form><div id="sms-event-list" aria-live="polite"></div></section>
       <section class="roster-panel" aria-labelledby="roster-title">
         <div class="roster-heading"><div><span class="admin-eyebrow"><span></span> THE ROSTER</span><h2 id="roster-title">Little adventurers</h2><p>Find a child, view their details, or update their status.</p></div><span class="roster-flower" aria-hidden="true">✿</span></div>
         <div class="roster-controls">
@@ -45,7 +47,7 @@
               <span class="registrant-avatar" aria-hidden="true"><%= (registrant.first_name || '?').charAt(0).toUpperCase() %></span>
               <div class="registrant-info"><a href="/admin/<%= registrant.id %>" class="registrant-name"><%= registrant.first_name %> <%= registrant.last_name %> <span aria-hidden="true">↗</span></a><p>Age <%= registrant.age %> <span aria-hidden="true">·</span> Pickup code <strong>#<%= registrant.id %></strong></p></div>
             </div>
-            <div class="registrant-actions"><span class="status-pill <%= checkedIn ? 'is-in' : 'is-out' %>" data-status-label><span aria-hidden="true"></span><%= checkedIn ? 'Checked in' : 'Checked out' %></span><button type="button" class="status-action <%= checkedIn ? 'action-out' : 'action-in' %>" data-status-action aria-label="<%= checkedIn ? 'Check out' : 'Check in' %> <%= registrant.first_name %> <%= registrant.last_name %>"><%= checkedIn ? 'Check out' : 'Check in' %></button><button type="button" class="delete-action" data-delete-action aria-label="Delete <%= registrant.first_name %> <%= registrant.last_name %>" title="Delete registration">×</button></div>
+            <div class="registrant-actions"><span class="status-pill <%= checkedIn ? 'is-in' : 'is-out' %>" data-status-label><span aria-hidden="true"></span><%= checkedIn ? 'Checked in' : 'Checked out' %></span><button type="button" class="message-action" data-open-sms aria-label="Text parent of <%= registrant.first_name %> <%= registrant.last_name %>" title="Text parent">✉</button><button type="button" class="status-action <%= checkedIn ? 'action-out' : 'action-in' %>" data-status-action aria-label="<%= checkedIn ? 'Check out' : 'Check in' %> <%= registrant.first_name %> <%= registrant.last_name %>"><%= checkedIn ? 'Check out' : 'Check in' %></button><button type="button" class="delete-action" data-delete-action aria-label="Delete <%= registrant.first_name %> <%= registrant.last_name %>" title="Delete registration">×</button></div>
           </article>
           <% }); %>
         </div>
@@ -53,5 +55,6 @@
       </section>
       <footer class="admin-footer">MADE WITH <span>♥</span> FOR LITTLE ADVENTURES</footer>
     </main>
+    <dialog class="sms-drawer" id="sms-drawer" aria-labelledby="sms-drawer-title"><div class="sms-drawer-header"><div><span class="admin-eyebrow">STAFF MESSAGING</span><h2 id="sms-drawer-title">Text a parent</h2><p id="sms-recipient"></p></div><button type="button" id="sms-close" aria-label="Close messaging">×</button></div><p id="sms-drawer-status" role="status"></p><label for="sms-event-assignment">Assign this child to an event</label><div class="sms-assignment"><select id="sms-event-assignment"></select><button type="button" id="sms-assign">Assign</button></div><small>Event assignment does not grant text-message consent.</small><button type="button" id="sms-template" class="sms-template">Use pickup reminder template</button><label for="sms-message">Your message</label><textarea id="sms-message" maxlength="480" rows="5" placeholder="Write a message to the parent…"></textarea><small>Up to 480 characters. Longer messages may cost more.</small><button type="button" id="sms-send" class="status-action action-in">Send text</button><h3>Recent messages</h3><div id="sms-history"></div></dialog>
   </body>
 </html>

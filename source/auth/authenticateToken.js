@@ -7,7 +7,7 @@ export const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      console.error(err);
+      if (req.originalUrl.startsWith('/admin/sms')) return res.status(401).json({ success: false, error: 'Please sign in again.' });
       return res.render("admin/login");
     }
 

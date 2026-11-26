@@ -4,6 +4,7 @@ import { signNewToken } from "../auth/index.js";
 import { createResponse } from "../utils/index.js";
 import { Guardian } from "../models/guardian.js";
 import express from "express";
+import { registerSms, normalizePhone } from "../services/sms.js";
 
 const indexRouter = express.Router();
 
@@ -57,6 +58,9 @@ indexRouter.post("/login", async (req, res) => {
 // creates a new registrant
 indexRouter.post("/new", async (req, res) => {
   try {
+    if (req.body.sms_consent === true && !normalizePhone(req.body.guardian_phone_number)) {
+      return res.status(400).json({ success: false, error: "Enter a valid US phone number to receive texts." });
+    }
     // instantiate the registrant and guardian objects
     const registrant = new Registrant();
     const guardian = new Guardian();
@@ -97,12 +101,14 @@ indexRouter.post("/new", async (req, res) => {
 
     // only create a new record for the guardian if they don't exist
     let guardianSuccess = false;
+    let guardianSaveId;
     if (guardianExists) {
       const guardianUpdate = await guardian.update();
       guardianSuccess = guardianUpdate.success;
     } else {
       const guardianSave = await guardian.save();
       guardianSuccess = guardianSave.success;
+      guardianSaveId = guardianSave.results?.insertId;
     }
 
     if (!guardianSuccess) {
@@ -114,7 +120,19 @@ indexRouter.post("/new", async (req, res) => {
       return;
     }
 
-    createResponse(res, { data: registrant, error: null, success: true });
+    let smsStatus = 'not_requested';
+    if (req.body.sms_consent === true && !['dry-run', 'live'].includes(process.env.SMS_MODE)) {
+      smsStatus = 'unavailable';
+    } else if (['dry-run', 'live'].includes(process.env.SMS_MODE)) {
+      try {
+        smsStatus = await registerSms({ registrantId: registrant.id, guardianId: guardianExists ? guardian.id : guardianSaveId, phone: guardian.phone_number, consent: req.body.sms_consent === true });
+        if (smsStatus === 'queued' && process.env.SMS_MODE === 'dry-run') smsStatus = 'dry_run';
+      } catch (error) {
+        console.error('Could not queue registration text:', error.message);
+        smsStatus = 'unavailable';
+      }
+    }
+    createResponse(res, { data: { ...registrant, first_name: registrant.firstName, last_name: registrant.lastName, smsStatus }, error: null, success: true });
   } catch (error) {
     console.error(error);
     createResponse(res, { data: null, error: error, success: false });

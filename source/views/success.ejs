@@ -23,13 +23,13 @@
       <div class="success-icon" aria-hidden="true">✓</div>
       <span class="eyebrow">ALL SET FOR ADVENTURE</span>
       <h1 class="support-title">You’re on the list<span class="heading-dot">!</span></h1>
-      <p class="support-intro">Your little one is registered. Save this code to show us when you pick up your child.</p>
+      <p class="support-intro">Your little one is registered. Take a screenshot of this code to show us when you pick up your child.</p>
       <div id="code-container">
         <p></p>
         <h2 class="registrant-save-code p-4"></h2>
       </div>
       <p class="security-note">Keep this code private and don’t share it with anyone.</p>
-      <button type="button" class="register-button" onclick="handleDone()">I’ve saved the code <span class="button-arrow" aria-hidden="true">↗</span></button>
+      <p id="sms-status" class="support-intro" role="status"></p>
     </main>
 
     <script>
@@ -44,13 +44,10 @@
 
         codeText.textContent = "The code for " + registrantName + " is:";
         code.textContent = registrantId;
+        const smsStatus = queryParams.get("sms");
+        document.getElementById("sms-status").textContent = smsStatus === "queued" ? "Your text has been queued; delivery is not guaranteed. Please take a screenshot of the code shown above." : smsStatus === "dry_run" ? "Text messaging is in test mode. Please take a screenshot of the code shown above." : smsStatus === "opted_out" ? "This number has opted out of texts. Please take a screenshot of the code shown above." : ["unavailable", "rate_limited"].includes(smsStatus) ? "We couldn't queue your text. Please take a screenshot of the code shown above." : "";
       }
 
-      async function handleDone() {
-        if (await confirmAction("Please make sure you've saved your pickup code before leaving.", { title: "Have you saved the code?", confirmText: "Yes, I’ve saved it" })) {
-          location.href = "/";
-        }
-      }
     </script>
   </body>
 </html>

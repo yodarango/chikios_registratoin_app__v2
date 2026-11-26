@@ -109,6 +109,7 @@
         // Create JSON body
         const body = JSON.stringify({
           guardian_phone_number: phone_number,
+          sms_consent: document.getElementById("sms-consent").checked,
           guardian_first_name: guardian_fn,
           guardian_last_name: guardian_ln,
           guardian_id,
@@ -140,12 +141,12 @@
 
           if (res?.success) {
             const { data } = res;
-            const query = new URLSearchParams({ id: data.id, firstName: data.first_name, lastName: data.last_name }).toString();
+            const query = new URLSearchParams({ id: data.id, firstName: data.first_name, lastName: data.last_name, sms: data.smsStatus }).toString();
 
             const router = `/success?${query}`;
             location.href = router;
           } else {
-            showToast("Something went wrong, please try again!", "error");
+            showToast(res.error || "Something went wrong, please try again!", "error");
             handleLoadingState(false);
           }
         } catch (error) {
