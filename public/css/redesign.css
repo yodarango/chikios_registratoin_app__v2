@@ -61,6 +61,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .field-help { margin: .7rem 0 0; color: #9aa99b; font-size: 1.1rem; }
 .sms-consent { display: flex; align-items: flex-start; gap: 1rem; margin-top: 2rem; color: #415a4f; font-size: 1.2rem; line-height: 1.5; cursor: pointer; }
 .sms-consent input { flex: 0 0 auto; width: 1.8rem; height: 1.8rem; accent-color: #317652; }
+.policy-links { margin: 1rem 0 0; color: #536a5b; font-size: 1.2rem; line-height: 1.5; }
+.policy-links a { color: #286b52; font-weight: 700; }
 .gender-options { display: flex; gap: .8rem; }
 .gender-options #malebtn, .gender-options #femalebtn { width: 100%; height: 4.8rem; border: 1px solid #e1e9df !important; border-radius: 1rem !important; background: #fafcf7 !important; color: #718578 !important; font-size: 1.25rem; font-weight: 700; }
 .gender-options #malebtn.active, .gender-options #femalebtn.active { border-color: #6eaa83 !important; background: #eaf5e9 !important; color: #337454 !important; }
@@ -86,6 +88,11 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .staff-card { padding: clamp(2.5rem, 5vw, 4.5rem); border: 1px solid rgba(255,255,255,.7); border-radius: 2.4rem; background: #fffdf7; box-shadow: 0 20px 60px rgba(29,61,40,.22); }
 .staff-card h1, .staff-card h3 { color: #2d443c; font-family: Outfit, sans-serif; }
 .staff-card a { color: #347b59; }
+.support-page .policy-card { width: min(100%, 76rem); }
+.policy-card h2 { margin: 2.4rem 0 .8rem; color: #2d443c; font-family: Outfit, sans-serif; font-size: 2rem; }
+.policy-card p, .policy-card li { color: #415a4f; font-size: 1.5rem; line-height: 1.65; overflow-wrap: anywhere; }
+.policy-card ul { padding-left: 2.2rem; }
+.policy-nav { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 3rem; }
 .support-brand { display: flex; margin-bottom: 2.5rem; }
 .support-title { margin: 0 0 .8rem; font-family: Outfit, sans-serif; font-size: 3.8rem; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
 .support-intro { margin: 0 0 2.5rem; color: #819287; }

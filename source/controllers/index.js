@@ -18,6 +18,14 @@ indexRouter.get("/success", async (req, res) => {
   res.render("success");
 });
 
+indexRouter.get("/privacy", (req, res) => {
+  res.render("privacy");
+});
+
+indexRouter.get("/terms", (req, res) => {
+  res.render("terms");
+});
+
 indexRouter.get("/login", async (req, res) => {
   res.status(200).render("admin/login");
 });
