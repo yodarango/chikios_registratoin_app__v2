@@ -1,4 +1,5 @@
 import { executeQuery } from "../db/executeQuery.js";
+import { pool } from "../db/connection.js";
 
 export function Registrant() {
   this.lastCheckTime = new Date();
@@ -18,7 +19,8 @@ export function Registrant() {
       const { results } = await executeQuery(
         `SELECT r.*, 
         g.first_name as guardian_first_name, 
-        g.last_name as guardian_last_name, 
+        g.last_name as guardian_last_name,
+        g.phone_number as guardian_phone_number,
         g.id as guardian_id
         FROM registrant as r
         JOIN guardian as g
@@ -57,6 +59,29 @@ export function Registrant() {
     }
   };
 
+  // Search the live database, including children outside the current roster.
+  this.searchAdminRegistrants = async function (term) {
+    const escaped = term.replace(/[\\%_]/g, "\\$&");
+    const pattern = `%${escaped}%`;
+    const [results] = await pool.query(
+      `SELECT r.id, r.first_name, r.last_name, r.age, r.gender, r.checked_in
+       FROM registrant r
+       WHERE (? = '' AND r.attendance LIKE '%GMC.2025%'
+           AND EXISTS (SELECT 1 FROM guardian g WHERE g.registrant_id = r.id)
+         OR ? <> '' AND (LOWER(CONCAT(r.first_name, ' ', r.last_name)) LIKE LOWER(?)
+           OR CAST(r.id AS CHAR) LIKE ?))
+       ORDER BY r.first_name ASC, r.last_name ASC, r.id ASC`,
+      [term, term, pattern, pattern]
+    );
+    const [[counts]] = await pool.query(
+      `SELECT COUNT(*) total, COALESCE(SUM(r.checked_in > 0), 0) checked_in
+       FROM registrant r
+       WHERE r.attendance LIKE '%GMC.2025%'
+       AND EXISTS (SELECT 1 FROM guardian g WHERE g.registrant_id = r.id)`
+    );
+    return { results, counts };
+  };
+
   // get a single registrant by id
   this.getSingleRegistrantById = async function () {
     try {
@@ -66,7 +91,7 @@ export function Registrant() {
       g.last_name as guardian_last_name, 
       g.phone_number as guardian_phone_number
       FROM registrant as r
-      JOIN guardian as g
+      LEFT JOIN guardian as g
       ON r.id = g.registrant_id
       WHERE r.id = ?`,
         [this.id]

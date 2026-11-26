@@ -39,6 +39,21 @@ privateRouter.get("/", async (req, res) => {
   res.status(200).render("admin/index", { registrants });
 });
 
+privateRouter.get("/search/registrants", async (req, res) => {
+  res.set("Cache-Control", "no-store");
+  if (typeof req.query.q !== "string" || req.query.q.length > 100) {
+    return res.status(400).json({ success: false, error: "Enter a search of up to 100 characters." });
+  }
+  try {
+    const registrant = new Registrant();
+    const { results, counts } = await registrant.searchAdminRegistrants(req.query.q.trim());
+    res.json({ success: true, registrants: results, counts });
+  } catch (error) {
+    console.error("Could not search registrants:", error.message);
+    res.status(503).json({ success: false, error: "Could not search registrations. Please try again." });
+  }
+});
+
 // gets a registrant by id
 privateRouter.get("/:id", async (req, res) => {
   const registrant = new Registrant();

@@ -64,8 +64,22 @@
         // Fill out the inputs with the registrant data
         document.getElementById("fn").value = registrant.first_name;
         document.getElementById("ln").value = registrant.last_name;
-        document.getElementById("gfn").value = registrant.guardian_first_name;
-        document.getElementById("gln").value = registrant.guardian_last_name;
+        document.getElementById("age").value = registrant.age ?? "";
+        document.getElementById("gfn").value = registrant.guardian_first_name ?? "";
+        document.getElementById("gln").value = registrant.guardian_last_name ?? "";
+        document.getElementById("gphone").value = registrant.guardian_phone_number ?? "";
+        document.getElementById("sms-consent").checked = false;
+        const gender = Number(registrant.gender);
+        if (gender === 1 || gender === 2) {
+          handleGender(gender, gender === 1 ? "malebtn" : "femalebtn");
+        } else {
+          document.getElementById("gender").value = 0;
+          for (const id of ["malebtn", "femalebtn"]) {
+            const button = document.getElementById(id);
+            button.classList.remove("active");
+            button.setAttribute("aria-pressed", "false");
+          }
+        }
 
         // if they are choosing a child that is already registered
         // update the attendance fields

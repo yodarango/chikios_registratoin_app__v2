@@ -80,4 +80,16 @@
   .registrant-actions .status-pill { grid-column: 1 / -1; justify-self: start; margin: 0; }
   .registrant-actions .status-action, .registrant-actions .delete-action { width: 100%; }
   .registrant-actions .message-action { grid-column: 1 / -1; width: 100%; }
+  .sms-event-panel form { width: 100%; min-width: 0; }
+  .sms-event-panel form > div { flex-wrap: wrap; }
+  .sms-event-panel input { flex: 1 1 100%; min-width: 0; max-width: 100%; }
+  .sms-event-panel form button { flex: 1 1 auto; }
+  .filter-group { min-width: 0; }
+  .filter-buttons { flex-wrap: wrap; }
+  .filter-buttons .filter-button { min-width: 0; }
+  .detail-profile > div { min-width: 0; overflow-wrap: anywhere; }
+  .sms-drawer { padding: 2rem; overflow-y: auto; }
+  .sms-drawer-header > div { min-width: 0; overflow-wrap: anywhere; }
+  .sms-assignment { flex-wrap: wrap; }
+  .sms-assignment select { flex: 1 1 100%; max-width: 100%; }
 }

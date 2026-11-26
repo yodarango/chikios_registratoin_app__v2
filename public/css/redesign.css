@@ -68,7 +68,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .registrants-dropdown { position: absolute; z-index: 5; top: 100%; left: 0; right: 0; max-height: 20rem; overflow-y: auto; margin-top: .5rem; border: 1px solid #dfebdd; border-radius: 1rem; background: white; box-shadow: 0 12px 30px rgba(43,76,55,.13); }
 .registrants-dropdown button { display: block; width: 100%; padding: 1.1rem 1.4rem; border: 0; background: white; color: var(--ink); text-align: left; }
 .registrants-dropdown button:hover { background: #edf7eb; }
-.registrants-dropdown p { margin: 0; }
+.registrants-dropdown p { margin: 0; overflow-wrap: anywhere; }
 .register-button { display: flex; align-items: center; justify-content: center; gap: 1rem; width: 100%; min-height: 5.3rem; margin-top: 2.7rem; padding: 1.2rem 2rem; border: 0; border-radius: 1.2rem; background: #367a59; color: white; font-weight: 800; box-shadow: 0 .6rem 0 #286648; transition: transform .2s, background .2s; }
 .register-button:hover { background: #2a694b; transform: translateY(-2px); }
 .register-button:disabled { transform: none; box-shadow: none; }
@@ -99,7 +99,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .success-icon { display: grid; place-items: center; width: 7rem; height: 7rem; margin: 0 auto 2rem; border-radius: 2.3rem; background: #e8f5e6; color: #4b9870; font-size: 3.5rem; }
 .success-card { text-align: center; }
 .success-card .support-brand { margin-left: auto; margin-right: auto; }
-.success-card .registrant-save-code { margin: 0; border: 2px dashed #bbd8b9; border-radius: 1.6rem; background: #f5faf0; color: #347b59; font-family: Outfit, sans-serif; font-size: clamp(5rem, 15vw, 9rem); }
+.success-card .registrant-save-code { margin: 0; border: 2px dashed #bbd8b9; border-radius: 1.6rem; background: #f5faf0; color: #347b59; font-family: Outfit, sans-serif; font-size: clamp(5rem, 15vw, 9rem); overflow-wrap: anywhere; }
 .success-card #code-container { margin: 2.2rem 0 !important; }
 .success-card #code-container p { color: #718a7a; }
 .success-card .security-note { margin: 1.5rem 0 2rem; color: #b4775f; font-weight: 700; }
@@ -123,17 +123,19 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 @media (max-width: 480px) {
   .story-content { padding: 2rem; }
   .story-copy h1 { font-size: 4.2rem; }
-  .mobile-brand { padding: 1.5rem 2rem; }
+  .mobile-brand { flex-wrap: wrap; gap: 1rem; padding: 1.5rem 2rem; }
   .registration-content, .page-footer { width: calc(100% - 4rem); }
   .registration-content { padding-top: 3rem; }
-  .form-grid { gap: 1.6rem 1rem; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
   .event-note { align-items: flex-start; }
   .event-note p { line-height: 1.5; }
-  .page-footer { font-size: .8rem; }
+  .page-footer { flex-wrap: wrap; font-size: .8rem; }
   .support-page { padding: 1.5rem; }
   .support-page main { margin: 2rem auto; }
 }
 @media (max-width: 767px) {
+  /* Keep iOS from zooming focused fields without disabling user zoom. */
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px !important; }
   .story-panel { position: sticky; top: 0; height: 50vh; }
   .story-background { inset: -15% 0; }
   .registration-main { position: relative; z-index: 2; }
