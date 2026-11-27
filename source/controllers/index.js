@@ -5,6 +5,7 @@ import { createResponse } from "../utils/index.js";
 import { Guardian } from "../models/guardian.js";
 import express from "express";
 import { registerSms, normalizePhone, smsMode } from "../services/sms.js";
+import { notifyRosterChanged } from "../services/rosterLive.js";
 
 const indexRouter = express.Router();
 
@@ -127,6 +128,8 @@ indexRouter.post("/new", async (req, res) => {
       });
       return;
     }
+
+    notifyRosterChanged();
 
     let smsStatus = 'not_requested';
     if (req.body.sms_consent === true && smsMode() === 'off') {

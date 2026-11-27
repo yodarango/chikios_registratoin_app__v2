@@ -6,6 +6,7 @@
   let searchTimer;
   let searchRequest;
   let searchVersion = 0;
+  const detail = document.querySelector('.detail-card[data-registrant-id]');
 
   function updateRoster() {
     if (!roster) return;
@@ -51,7 +52,7 @@
     return card;
   }
 
-  async function searchRoster() {
+  async function searchRoster({ quiet = false } = {}) {
     if (!roster) return;
     const version = ++searchVersion;
     searchRequest?.abort();
@@ -74,9 +75,71 @@
     } catch (error) {
       if (error.name !== 'AbortError' && version === searchVersion) {
         console.error(error);
-        showToast(error.message, 'error');
+        if (!quiet) showToast(error.message, 'error');
       }
     }
+  }
+
+  function applyStatus(card, nowIn) {
+    card.dataset.registrantCheckedIn = String(nowIn);
+    const label = card.querySelector('[data-status-label]');
+    label.classList.toggle('is-in', nowIn);
+    label.classList.toggle('is-out', !nowIn);
+    label.innerHTML = `<span aria-hidden="true"></span>${nowIn ? 'Checked in' : 'Checked out'}`;
+    const button = card.querySelector('[data-status-action]');
+    button.classList.toggle('action-in', !nowIn);
+    button.classList.toggle('action-out', nowIn);
+    button.textContent = nowIn ? 'Check out' : 'Check in';
+    button.setAttribute('aria-label', `${button.textContent} ${card.dataset.registrantName}`);
+  }
+
+  let detailVersion = 0;
+  async function refreshDetail() {
+    if (!detail) return;
+    const version = ++detailVersion;
+    try {
+      const response = await fetch(`/admin/search/registrants?q=${encodeURIComponent(detail.dataset.registrantId)}`, { cache: 'no-store' });
+      if (!response.ok) return;
+      const result = await response.json();
+      if (version !== detailVersion || !result.success) return;
+      const child = result.registrants.find(item => String(item.id) === detail.dataset.registrantId);
+      if (child) applyStatus(detail, Number(child.checked_in) > 0);
+      else { detail.querySelector('[data-status-action]').disabled = true; detail.querySelector('[data-status-label]').textContent = 'Registration removed'; }
+    } catch (error) { console.error('Could not refresh registration status:', error); }
+  }
+
+  let liveTimer;
+  function refreshLive() {
+    if (document.hidden) return;
+    if (roster) { clearTimeout(searchTimer); searchRoster({ quiet: true }); }
+    else refreshDetail();
+  }
+  function scheduleLiveRefresh() { clearTimeout(liveTimer); liveTimer = setTimeout(refreshLive, 100); }
+  function connectLive() {
+    if (!roster && !detail) return;
+    let stream;
+    let socket;
+    let retry;
+    let failureCount = 0;
+    const startStream = () => {
+      if (stream || !window.EventSource) return;
+      stream = new EventSource('/admin/live/events');
+      stream.onopen = scheduleLiveRefresh;
+      stream.onmessage = (event) => { try { if (JSON.parse(event.data).type === 'roster_changed') scheduleLiveRefresh(); } catch {} };
+    };
+    const connect = () => {
+      if (!window.WebSocket) { startStream(); return; }
+      try { socket = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/admin/live`); }
+      catch { startStream(); retry = setTimeout(connect, 30000); return; }
+      socket.onopen = () => { failureCount = 0; if (stream) { stream.close(); stream = null; } scheduleLiveRefresh(); };
+      socket.onmessage = (event) => { try { if (JSON.parse(event.data).type === 'roster_changed') scheduleLiveRefresh(); } catch {} };
+      socket.onerror = () => socket.close();
+      socket.onclose = () => { startStream(); failureCount++; retry = setTimeout(connect, Math.min(30000, 1000 * 2 ** Math.min(failureCount, 5))); };
+    };
+    connect();
+    const poll = setInterval(refreshLive, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleLiveRefresh(); });
+    window.addEventListener('pagehide', (event) => { if (event.persisted) return; clearTimeout(retry); clearTimeout(liveTimer); clearInterval(poll); if (socket) { socket.onclose = null; socket.close(); } if (stream) stream.close(); });
   }
 
   if (roster) {
@@ -84,7 +147,7 @@
       clearTimeout(searchTimer);
       searchVersion++;
       searchRequest?.abort();
-      searchTimer = setTimeout(searchRoster, 250);
+      searchTimer = setTimeout(() => searchRoster(), 250);
     });
     document.querySelectorAll('[data-filter-gender], [data-filter-status]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -100,6 +163,7 @@
     });
     updateRoster();
   }
+  connectLive();
 
   document.addEventListener('click', async (event) => {
     const statusButton = event.target.closest('[data-status-action]');
@@ -128,16 +192,7 @@
       if (deleteButton) {
         card.remove();
       } else {
-        const nowIn = !isIn;
-        card.dataset.registrantCheckedIn = String(nowIn);
-        const label = card.querySelector('[data-status-label]');
-        label.classList.toggle('is-in', nowIn);
-        label.classList.toggle('is-out', !nowIn);
-        label.innerHTML = `<span aria-hidden="true"></span>${nowIn ? 'Checked in' : 'Checked out'}`;
-        button.classList.toggle('action-in', !nowIn);
-        button.classList.toggle('action-out', nowIn);
-        button.textContent = nowIn ? 'Check out' : 'Check in';
-        button.setAttribute('aria-label', `${button.textContent} ${card.dataset.registrantName}`);
+        applyStatus(card, !isIn);
       }
       if (roster) {
         clearTimeout(searchTimer);

@@ -15,6 +15,7 @@ import { indexRouter } from "./source/controllers/index.js";
 import { requestLogger } from "./source/utils/index.js";
 import { smsAdminRouter, smsWebhookRouter } from "./source/controllers/sms.js";
 import { initializeSms, startSmsWorker } from "./source/services/sms.js";
+import { attachRosterWebSocket } from "./source/services/rosterLive.js";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -37,7 +38,8 @@ app.use("/admin/sms", authenticateToken, smsAdminRouter);
 app.use("/admin", requestLogger, authenticateToken, privateRouter);
 app.use("/", requestLogger, indexRouter);
 
-app.listen(process.env.PORT, async () => {
+const server = app.listen(process.env.PORT, async () => {
   console.log(`listening on port ${process.env.PORT}`);
   if (await initializeSms()) startSmsWorker();
 });
+attachRosterWebSocket(server);

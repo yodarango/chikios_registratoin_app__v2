@@ -5,6 +5,7 @@ const publicRouter = express.Router();
 const privateRouter = express.Router();
 import express from "express";
 import { enrollAtCheckIn, smsMode } from "../services/sms.js";
+import { notifyRosterChanged, rosterEventStream } from "../services/rosterLive.js";
 
 // updates the registrant with the data incoming from the body
 privateRouter.put("/update/registrant/:id", async (req, res) => {
@@ -23,6 +24,7 @@ privateRouter.put("/update/registrant/:id", async (req, res) => {
       return;
     }
 
+    notifyRosterChanged();
     createResponse(res, { data: req.body, error: null, success: true });
   } catch (error) {
     console.error(error);
@@ -34,10 +36,12 @@ privateRouter.put("/update/registrant/:id", async (req, res) => {
 // gets all registrants
 privateRouter.get("/", async (req, res) => {
   const registrant = new Registrant();
-  const registrants = await registrant.getAllRegistrantsForLastConf();
+  const { results: registrants } = await registrant.searchAdminRegistrants("");
 
   res.status(200).render("admin/index", { registrants });
 });
+
+privateRouter.get("/live/events", rosterEventStream);
 
 privateRouter.get("/search/registrants", async (req, res) => {
   res.set("Cache-Control", "no-store");
@@ -92,6 +96,7 @@ privateRouter.post("/check-out/:id", async (req, res) => {
     return;
   }
 
+  notifyRosterChanged();
   createResponse(res, { data: req.body, error: null, success: true });
 });
 
@@ -113,6 +118,7 @@ privateRouter.post("/check-in/:id", async (req, res) => {
     return;
   }
 
+  notifyRosterChanged();
   if (smsMode() !== 'off') {
     try { await enrollAtCheckIn(registrant.id); }
     catch (error) { console.error('Could not assign checked-in child to event:', error.message); }
@@ -138,6 +144,7 @@ privateRouter.delete("/delete/:id", async (req, res) => {
     return;
   }
 
+  notifyRosterChanged();
   createResponse(res, { data: req.body, error: null, success: true });
 });
 

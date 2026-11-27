@@ -7,7 +7,7 @@ export const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      if (req.originalUrl.startsWith('/admin/sms') || req.originalUrl.startsWith('/admin/search/')) return res.status(401).json({ success: false, error: 'Please sign in again.' });
+      if (req.originalUrl.startsWith('/admin/sms') || req.originalUrl.startsWith('/admin/search/') || req.originalUrl.startsWith('/admin/live/')) return res.status(401).json({ success: false, error: 'Please sign in again.' });
       return res.render("admin/login");
     }
 
