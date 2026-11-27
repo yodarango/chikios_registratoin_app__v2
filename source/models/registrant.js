@@ -64,7 +64,8 @@ export function Registrant() {
     const escaped = term.replace(/[\\%_]/g, "\\$&");
     const pattern = `%${escaped}%`;
     const [results] = await pool.query(
-      `SELECT r.id, r.first_name, r.last_name, r.age, r.gender, r.checked_in
+      `SELECT r.id, r.first_name, r.last_name, r.age, r.gender, r.checked_in,
+       (SELECT g.phone_number FROM guardian g WHERE g.registrant_id = r.id ORDER BY g.id DESC LIMIT 1) AS guardian_phone_number
        FROM registrant r
        WHERE (? = '' AND r.attendance LIKE '%GMC.2025%'
            AND EXISTS (SELECT 1 FROM guardian g WHERE g.registrant_id = r.id)

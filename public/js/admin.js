@@ -31,9 +31,11 @@
     card.className = 'registrant-card';
     card.dataset.registrantId = registrant.id;
     card.dataset.registrantName = name;
+    card.dataset.registrantFirstName = registrant.first_name || '';
+    card.dataset.guardianPhone = registrant.guardian_phone_number || '';
     card.dataset.registrantGender = registrant.gender;
     card.dataset.registrantCheckedIn = String(isIn);
-    card.innerHTML = '<div class="registrant-identity"><span class="registrant-avatar" aria-hidden="true"></span><div class="registrant-info"><a class="registrant-name"></a><p>Age <span data-age></span> <span aria-hidden="true">·</span> Pickup code <strong></strong></p></div></div><div class="registrant-actions"><span class="status-pill" data-status-label><span aria-hidden="true"></span></span><button type="button" class="message-action" data-open-sms title="Text parent">✉</button><button type="button" class="status-action" data-status-action></button><button type="button" class="delete-action" data-delete-action title="Delete registration">×</button></div>';
+    card.innerHTML = '<div class="registrant-identity"><span class="registrant-avatar" aria-hidden="true"></span><div class="registrant-info"><a class="registrant-name"></a><p>Age <span data-age></span> <span aria-hidden="true">·</span> Pickup code <strong></strong></p></div></div><div class="registrant-actions"><span class="status-pill" data-status-label><span aria-hidden="true"></span></span><button type="button" class="pickup-action" data-pickup-message title="Open pickup message on your phone">Pickup ↗</button><button type="button" class="message-action" data-open-sms title="Text parent">✉</button><button type="button" class="status-action" data-status-action></button><button type="button" class="delete-action" data-delete-action title="Delete registration">×</button></div>';
     card.querySelector('.registrant-avatar').textContent = (registrant.first_name || '?').charAt(0).toUpperCase();
     const link = card.querySelector('.registrant-name');
     link.href = `/admin/${encodeURIComponent(registrant.id)}`;
@@ -44,6 +46,7 @@
     label.classList.add(isIn ? 'is-in' : 'is-out');
     label.append(document.createTextNode(isIn ? 'Checked in' : 'Checked out'));
     card.querySelector('[data-open-sms]').setAttribute('aria-label', `Text parent of ${name}`);
+    card.querySelector('[data-pickup-message]').setAttribute('aria-label', `Open pickup message for ${name}`);
     const action = card.querySelector('[data-status-action]');
     action.classList.add(isIn ? 'action-out' : 'action-in');
     action.textContent = isIn ? 'Check out' : 'Check in';
@@ -166,6 +169,21 @@
   connectLive();
 
   document.addEventListener('click', async (event) => {
+    const pickupButton = event.target.closest('[data-pickup-message]');
+    if (pickupButton) {
+      const card = pickupButton.closest('[data-registrant-id]');
+      const raw = (card?.dataset.guardianPhone || '').trim();
+      const digits = raw.replace(/\D/g, '');
+      if (!/^[+\d\s().-]+$/.test(raw) || (raw.startsWith('+') ? digits.length !== 11 || !digits.startsWith('1') : !(digits.length === 10 || (digits.length === 11 && digits.startsWith('1'))))) {
+        showToast('A valid US guardian phone number is required for a pickup message.', 'error');
+        return;
+      }
+      const phone = digits.length === 10 ? `+1${digits}` : `+${digits}`;
+      const message = `${card.dataset.registrantFirstName} needs to be picked up from kids quest. do not forget to show their code :${card.dataset.registrantId} at the door`;
+      const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      location.href = `sms:${phone}${ios ? '&' : '?'}body=${encodeURIComponent(message)}`;
+      return;
+    }
     const statusButton = event.target.closest('[data-status-action]');
     const deleteButton = event.target.closest('[data-delete-action]');
     if (!statusButton && !deleteButton) return;
