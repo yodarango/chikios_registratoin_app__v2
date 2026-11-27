@@ -1,5 +1,6 @@
 import { pool } from '../db/connection.js';
 import { readFile } from 'node:fs/promises';
+import { smsLog } from '../utils/smsLogger.js';
 
 const disclosure = 'Kidz Quest: I agree to receive registration, pickup reminders and staff texts. Message frequency varies; message and data rates may apply. Reply STOP to opt out, HELP for help.';
 const localClock = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
@@ -125,24 +126,29 @@ async function scheduleReminders(now) {
 async function sendMessage(message) {
   const [[allowed]] = await pool.query('SELECT c.consented, c.opted_out, r.checked_in, g.phone_number, e.enabled event_enabled FROM sms_consent c JOIN guardian g ON g.id=? AND g.registrant_id=? JOIN registrant r ON r.id=? LEFT JOIN sms_events e ON e.id=? WHERE c.phone=?', [message.guardian_id, message.registrant_id, message.registrant_id, message.event_id, message.phone]);
   if (!allowed?.consented || allowed.opted_out || normalizePhone(allowed.phone_number) !== message.phone || (['reminder', 'overdue'].includes(message.kind) && (!allowed.checked_in || !allowed.event_enabled))) {
-    await pool.query("UPDATE sms_messages SET status='skipped', error_detail='Consent, number, event, or check-in status changed' WHERE id=?", [message.id]); return;
+    await pool.query("UPDATE sms_messages SET status='skipped', error_detail='Consent, number, event, or check-in status changed' WHERE id=?", [message.id]);
+    smsLog('warn', 'send_skipped', { messageId: message.id, status: 'skipped' }); return;
   }
   if (process.env.SMS_MODE !== 'live') { await pool.query("UPDATE sms_messages SET status='dry_run' WHERE id=?", [message.id]); return; }
   const { TWILIO_ACCOUNT_SID: account, TWILIO_AUTH_TOKEN: token, TWILIO_MESSAGING_SERVICE_SID: service, SMS_PUBLIC_BASE_URL: base } = process.env;
-  if (!account || !token || !service || !base?.startsWith('https://')) { await pool.query("UPDATE sms_messages SET status='failed', error_detail='Twilio configuration incomplete' WHERE id=?", [message.id]); return; }
+  if (!account || !token || !service || !base?.startsWith('https://')) { await pool.query("UPDATE sms_messages SET status='failed', error_detail='Twilio configuration incomplete' WHERE id=?", [message.id]); smsLog('error', 'configuration_incomplete', { messageId: message.id, status: 'failed' }); return; }
   const params = new URLSearchParams({ To: message.phone, MessagingServiceSid: service, Body: message.body, StatusCallback: `${base.replace(/\/$/, '')}/webhooks/twilio/status?id=${message.id}` });
   try {
     const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${encodeURIComponent(account)}/Messages.json`, { method: 'POST', headers: { Authorization: `Basic ${Buffer.from(`${account}:${token}`).toString('base64')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: params, signal: AbortSignal.timeout(15000) });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.sid) {
       const uncertain = response.status >= 500 || response.ok;
-      await pool.query('UPDATE sms_messages SET status=?, error_detail=? WHERE id=?', [uncertain ? 'unknown' : 'failed', uncertain ? 'Provider outcome uncertain; reconcile before retrying' : `Twilio error ${data.code || response.status}`, message.id]);
+      const errorCode = /^\d{1,10}$/.test(String(data.code ?? '')) ? data.code : response.status;
+      await pool.query('UPDATE sms_messages SET status=?, error_detail=? WHERE id=?', [uncertain ? 'unknown' : 'failed', uncertain ? 'Provider outcome uncertain; reconcile before retrying' : `Twilio error ${errorCode}`, message.id]);
+      smsLog('error', 'provider_rejected', { messageId: message.id, httpStatus: response.status, errorCode: data.code, status: uncertain ? 'unknown' : 'failed' });
       return;
     }
     await pool.query("UPDATE sms_messages SET status=IF(status='processing','accepted',status), provider_sid=COALESCE(provider_sid, ?) WHERE id=?", [data.sid, message.id]);
+    smsLog('info', 'provider_accepted', { messageId: message.id, providerSid: data.sid, status: 'accepted' });
   } catch (error) {
     // A timeout may occur after Twilio accepted the request. Never retry blindly.
     await pool.query("UPDATE sms_messages SET status='unknown', error_detail='Provider outcome uncertain; reconcile before retrying' WHERE id=?", [message.id]);
+    smsLog('error', 'provider_outcome_unknown', { messageId: message.id, status: 'unknown', errorType: ['AbortError', 'TimeoutError', 'TypeError', 'Error'].includes(error.name) ? error.name : 'other' });
   }
 }
 

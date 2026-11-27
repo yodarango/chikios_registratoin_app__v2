@@ -2,6 +2,7 @@ import express from 'express';
 import crypto from 'node:crypto';
 import { pool } from '../db/connection.js';
 import { enqueueManual, normalizePhone, smsMode } from '../services/sms.js';
+import { smsLog } from '../utils/smsLogger.js';
 
 export const smsAdminRouter = express.Router();
 export const smsWebhookRouter = express.Router();
@@ -74,7 +75,7 @@ smsAdminRouter.post('/messages/:id', sameOrigin, async (req, res) => {
 function verifyTwilio(req, res, next) {
   const token = process.env.TWILIO_AUTH_TOKEN;
   const base = process.env.SMS_PUBLIC_BASE_URL?.replace(/\/$/, '');
-  if (!token || !base?.startsWith('https://') || !req.is('application/x-www-form-urlencoded')) return res.sendStatus(403);
+  if (!token || !base?.startsWith('https://') || !req.is('application/x-www-form-urlencoded')) { smsLog('warn', 'webhook_rejected_configuration'); return res.sendStatus(403); }
   let data = base + req.originalUrl;
   for (const key of Object.keys(req.body).sort()) {
     const values = Array.isArray(req.body[key]) ? [...new Set(req.body[key])].sort() : [req.body[key]];
@@ -82,7 +83,7 @@ function verifyTwilio(req, res, next) {
   }
   const expected = Buffer.from(crypto.createHmac('sha1', token).update(data).digest('base64'));
   const received = Buffer.from(req.get('X-Twilio-Signature') || '');
-  if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) return res.sendStatus(403);
+  if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) { smsLog('warn', 'webhook_rejected_signature'); return res.sendStatus(403); }
   next();
 }
 
@@ -91,9 +92,10 @@ smsWebhookRouter.post('/status', verifyTwilio, async (req, res) => {
   const allowed = ['accepted', 'queued', 'sending', 'sent', 'delivered', 'undelivered', 'failed'];
   if (!MessageSid || !allowed.includes(MessageStatus)) return res.sendStatus(400);
   try {
-    await pool.query("UPDATE sms_messages SET status=?, provider_sid=COALESCE(provider_sid, ?) WHERE id=? AND (provider_sid IS NULL OR provider_sid=?) AND status IN ('processing','unknown','accepted','queued','sending','sent') AND NOT (status='sent' AND ? IN ('accepted','queued','sending')) AND NOT (status='sending' AND ? IN ('accepted','queued'))", [MessageStatus, MessageSid, req.query.id, MessageSid, MessageStatus, MessageStatus]);
+    const [result] = await pool.query("UPDATE sms_messages SET status=?, provider_sid=COALESCE(provider_sid, ?), error_detail=CASE WHEN ? IN ('failed','undelivered') AND ? REGEXP '^[0-9]{1,10}$' THEN CONCAT('Twilio error ', ?) ELSE error_detail END WHERE id=? AND (provider_sid IS NULL OR provider_sid=?) AND status IN ('processing','unknown','accepted','queued','sending','sent') AND NOT (status='sent' AND ? IN ('accepted','queued','sending')) AND NOT (status='sending' AND ? IN ('accepted','queued'))", [MessageStatus, MessageSid, MessageStatus, req.body.ErrorCode || '', req.body.ErrorCode || '', req.query.id, MessageSid, MessageStatus, MessageStatus]);
+    smsLog(['failed', 'undelivered'].includes(MessageStatus) ? 'error' : 'info', 'delivery_status', { messageId: req.query.id, providerSid: MessageSid, status: MessageStatus, errorCode: req.body.ErrorCode, applied: result.affectedRows > 0 });
     res.sendStatus(204);
-  } catch { res.sendStatus(503); }
+  } catch { smsLog('error', 'delivery_status_database_error', { messageId: req.query.id, providerSid: MessageSid }); res.sendStatus(503); }
 });
 
 smsWebhookRouter.post('/incoming', verifyTwilio, async (req, res) => {
@@ -104,5 +106,5 @@ smsWebhookRouter.post('/incoming', verifyTwilio, async (req, res) => {
     if (action === 'STOP') await pool.query('INSERT INTO sms_consent (phone, opted_out) VALUES (?, 1) ON DUPLICATE KEY UPDATE opted_out=1', [phone]);
     if (action === 'START') await pool.query('UPDATE sms_consent SET opted_out=0 WHERE phone=?', [phone]);
     res.type('text/xml').send('<Response/>');
-  } catch { res.sendStatus(503); }
+  } catch { smsLog('error', 'opt_out_webhook_database_error'); res.sendStatus(503); }
 });
