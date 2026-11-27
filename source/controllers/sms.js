@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'node:crypto';
 import { pool } from '../db/connection.js';
-import { enqueueManual, normalizePhone } from '../services/sms.js';
+import { enqueueManual, normalizePhone, smsMode } from '../services/sms.js';
 
 export const smsAdminRouter = express.Router();
 export const smsWebhookRouter = express.Router();
@@ -15,11 +15,13 @@ function sameOrigin(req, res, next) {
 }
 
 smsAdminRouter.get('/events', async (req, res) => {
-  try { const [events] = await pool.query("SELECT id, DATE_FORMAT(event_date, '%Y-%m-%d') event_date, enabled FROM sms_events ORDER BY event_date DESC LIMIT 30"); res.json({ success: true, events, mode: process.env.SMS_MODE || 'off' }); }
+  if (smsMode() === 'off') return res.json({ success: true, events: [], mode: 'off' });
+  try { const [events] = await pool.query("SELECT id, DATE_FORMAT(event_date, '%Y-%m-%d') event_date, enabled FROM sms_events ORDER BY event_date DESC LIMIT 30"); res.json({ success: true, events, mode: smsMode() }); }
   catch { res.status(503).json({ success: false, error: 'SMS database setup is required.' }); }
 });
 
 smsAdminRouter.post('/events', sameOrigin, async (req, res) => {
+  if (smsMode() === 'off') return res.status(503).json({ success: false, error: 'Text messaging is unavailable.' });
   const date = req.body.date;
   if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(`${date}T12:00:00Z`)) || new Date(`${date}T12:00:00Z`).toISOString().slice(0, 10) !== date) return res.status(400).json({ success: false, error: 'Enter a valid event date.' });
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -29,6 +31,7 @@ smsAdminRouter.post('/events', sameOrigin, async (req, res) => {
 });
 
 smsAdminRouter.post('/events/:eventId/enroll/:registrantId', sameOrigin, async (req, res) => {
+  if (smsMode() === 'off') return res.status(503).json({ success: false, error: 'Text messaging is unavailable.' });
   const eventId = Number(req.params.eventId);
   const registrantId = Number(req.params.registrantId);
   if (!Number.isSafeInteger(eventId) || eventId < 1 || !Number.isSafeInteger(registrantId) || registrantId < 1) return res.status(400).json({ success: false, error: 'Invalid event or child.' });
@@ -44,11 +47,13 @@ smsAdminRouter.post('/events/:eventId/enroll/:registrantId', sameOrigin, async (
 });
 
 smsAdminRouter.delete('/events/:id', sameOrigin, async (req, res) => {
+  if (smsMode() === 'off') return res.status(503).json({ success: false, error: 'Text messaging is unavailable.' });
   try { await pool.query('UPDATE sms_events SET enabled=0 WHERE id=?', [req.params.id]); res.json({ success: true }); }
   catch { res.status(503).json({ success: false, error: 'Could not disable event.' }); }
 });
 
 smsAdminRouter.get('/messages/:id', async (req, res) => {
+  if (smsMode() === 'off') return res.status(503).json({ success: false, error: 'Text messaging is unavailable.' });
   try {
     const [children] = await pool.query('SELECT r.first_name, r.last_name, g.phone_number FROM registrant r JOIN guardian g ON g.registrant_id=r.id WHERE r.id=? ORDER BY g.id DESC LIMIT 1', [req.params.id]);
     if (!children.length) return res.status(404).json({ success: false, error: 'Child not found.' });
@@ -56,12 +61,12 @@ smsAdminRouter.get('/messages/:id', async (req, res) => {
     const phone = normalizePhone(children[0].phone_number);
     const [consent] = phone ? await pool.query('SELECT consented, opted_out FROM sms_consent WHERE phone=?', [phone]) : [[]];
     const [events] = await pool.query("SELECT e.id, DATE_FORMAT(e.event_date, '%Y-%m-%d') event_date, IF(se.registrant_id IS NULL, 0, 1) enrolled FROM sms_events e LEFT JOIN sms_enrollments se ON se.event_id=e.id AND se.registrant_id=? WHERE e.enabled=1 AND e.event_date >= ? ORDER BY e.event_date ASC LIMIT 30", [req.params.id, new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())]);
-    res.json({ success: true, child: children[0], canText: !!consent[0]?.consented && !consent[0].opted_out, messages, events, mode: process.env.SMS_MODE || 'off' });
+    res.json({ success: true, child: children[0], canText: !!consent[0]?.consented && !consent[0].opted_out, messages, events, mode: smsMode() });
   } catch { res.status(503).json({ success: false, error: 'SMS database setup is required.' }); }
 });
 
 smsAdminRouter.post('/messages/:id', sameOrigin, async (req, res) => {
-  if (!['dry-run', 'live'].includes(process.env.SMS_MODE)) return res.status(503).json({ success: false, error: 'Text messaging is disabled.' });
+  if (smsMode() === 'off') return res.status(503).json({ success: false, error: 'Text messaging is unavailable.' });
   try { await enqueueManual(req.params.id, req.body.message); res.json({ success: true }); }
   catch (error) { res.status(400).json({ success: false, error: error.message }); }
 });

@@ -4,7 +4,7 @@ import { createResponse } from "../utils/index.js";
 const publicRouter = express.Router();
 const privateRouter = express.Router();
 import express from "express";
-import { enrollAtCheckIn } from "../services/sms.js";
+import { enrollAtCheckIn, smsMode } from "../services/sms.js";
 
 // updates the registrant with the data incoming from the body
 privateRouter.put("/update/registrant/:id", async (req, res) => {
@@ -113,7 +113,7 @@ privateRouter.post("/check-in/:id", async (req, res) => {
     return;
   }
 
-  if (['dry-run', 'live'].includes(process.env.SMS_MODE)) {
+  if (smsMode() !== 'off') {
     try { await enrollAtCheckIn(registrant.id); }
     catch (error) { console.error('Could not assign checked-in child to event:', error.message); }
   }

@@ -16,6 +16,7 @@
     try {
       const data = await request('/admin/sms/events');
       document.getElementById('sms-mode').textContent = data.mode === 'live' ? 'Live messaging enabled.' : data.mode === 'dry-run' ? 'Dry-run mode: no texts will be sent.' : 'Messaging is off; no texts will be sent.';
+      eventForm.querySelectorAll('input, button').forEach((control) => { control.disabled = data.mode === 'off'; });
       list.replaceChildren();
       const active = data.events.filter((event) => event.enabled);
       if (!active.length) { list.textContent = 'No reminder dates enabled.'; return; }
@@ -26,7 +27,7 @@
         button.addEventListener('click', async () => { try { await request(`/admin/sms/events/${event.id}`, { method: 'DELETE' }); await loadEvents(); } catch (error) { showToast(error.message, 'error'); } });
         item.append(label, button); list.appendChild(item);
       });
-    } catch (error) { document.getElementById('sms-mode').textContent = error.message; }
+    } catch (error) { document.getElementById('sms-mode').textContent = 'Messaging is unavailable.'; eventForm.querySelectorAll('input, button').forEach((control) => { control.disabled = true; }); }
   }
 
   if (eventForm) {
@@ -82,7 +83,7 @@
     });
     document.getElementById('sms-send').addEventListener('click', async (event) => {
       const button = event.currentTarget; button.disabled = true;
-      try { await request(`/admin/sms/messages/${childId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: document.getElementById('sms-message').value }) }); document.getElementById('sms-message').value = ''; await loadDrawer(); showToast('Text queued. Check history for delivery status.'); }
+      try { await request(`/admin/sms/messages/${childId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: document.getElementById('sms-message').value }) }); document.getElementById('sms-message').value = ''; await loadDrawer(); showToast('Message recorded. Check history for its status.'); }
       catch (error) { showToast(error.message, 'error'); button.disabled = false; }
     });
   }

@@ -1,4 +1,4 @@
--- Run explicitly against the application database before enabling SMS.
+-- Applied additively at startup when SMS is configured, or run manually.
 -- These tables do not modify or delete existing registrants or guardians.
 CREATE TABLE IF NOT EXISTS sms_events (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

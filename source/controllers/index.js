@@ -4,7 +4,7 @@ import { signNewToken } from "../auth/index.js";
 import { createResponse } from "../utils/index.js";
 import { Guardian } from "../models/guardian.js";
 import express from "express";
-import { registerSms, normalizePhone } from "../services/sms.js";
+import { registerSms, normalizePhone, smsMode } from "../services/sms.js";
 
 const indexRouter = express.Router();
 
@@ -129,12 +129,12 @@ indexRouter.post("/new", async (req, res) => {
     }
 
     let smsStatus = 'not_requested';
-    if (req.body.sms_consent === true && !['dry-run', 'live'].includes(process.env.SMS_MODE)) {
+    if (req.body.sms_consent === true && smsMode() === 'off') {
       smsStatus = 'unavailable';
-    } else if (['dry-run', 'live'].includes(process.env.SMS_MODE)) {
+    } else if (smsMode() !== 'off') {
       try {
         smsStatus = await registerSms({ registrantId: registrant.id, guardianId: guardianExists ? guardian.id : guardianSaveId, phone: guardian.phone_number, consent: req.body.sms_consent === true });
-        if (smsStatus === 'queued' && process.env.SMS_MODE === 'dry-run') smsStatus = 'dry_run';
+        if (smsStatus === 'queued' && smsMode() === 'dry-run') smsStatus = 'dry_run';
       } catch (error) {
         console.error('Could not queue registration text:', error.message);
         smsStatus = 'unavailable';

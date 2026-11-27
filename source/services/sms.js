@@ -1,8 +1,48 @@
 import { pool } from '../db/connection.js';
+import { readFile } from 'node:fs/promises';
 
 const disclosure = 'Kidz Quest: I agree to receive registration, pickup reminders and staff texts. Message frequency varies; message and data rates may apply. Reply STOP to opt out, HELP for help.';
 const localClock = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 let working = false;
+let ready = false;
+
+export function smsMode() {
+  return ready ? process.env.SMS_MODE : 'off';
+}
+
+function configured() {
+  if (process.env.SMS_MODE === 'dry-run') return true;
+  if (process.env.SMS_MODE !== 'live') return false;
+  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID, SMS_PUBLIC_BASE_URL } = process.env;
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_MESSAGING_SERVICE_SID || !SMS_PUBLIC_BASE_URL) return false;
+  try {
+    const url = new URL(SMS_PUBLIC_BASE_URL);
+    return url.protocol === 'https:' && url.origin === SMS_PUBLIC_BASE_URL && !url.username && !url.password;
+  } catch { return false; }
+}
+
+// Additive only: never alter or remove existing registration or messaging data.
+export async function initializeSms() {
+  ready = false;
+  if (!configured()) {
+    if (['dry-run', 'live'].includes(process.env.SMS_MODE)) console.warn('SMS disabled: configuration is incomplete or the public URL is not an HTTPS origin.');
+    return false;
+  }
+  try {
+    const schema = await readFile(new URL('../db/sms-schema.sql', import.meta.url), 'utf8');
+    for (const statement of schema.replace(/^\s*--.*$/gm, '').split(';').map(s => s.trim()).filter(Boolean)) await pool.query(statement);
+    await pool.query('SELECT id, event_date, enabled, created_at FROM sms_events LIMIT 0');
+    await pool.query('SELECT phone, consented, opted_out, consented_at, disclosure, updated_at FROM sms_consent LIMIT 0');
+    await pool.query('SELECT event_id, registrant_id, guardian_id FROM sms_enrollments LIMIT 0');
+    await pool.query('SELECT id, event_id, registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at, status, provider_sid, error_detail, automatic_key, created_at, updated_at FROM sms_messages LIMIT 0');
+    ready = true;
+    console.log(`SMS ready in ${smsMode()} mode.`);
+    return true;
+  } catch (error) {
+    console.error('SMS disabled: database setup failed:', error.message);
+    return false;
+  }
+}
 
 export function normalizePhone(value) {
   const raw = String(value || '').trim();
@@ -37,7 +77,7 @@ export async function registerSms({ registrantId, guardianId, phone, consent }) 
     const key = `registration:${eventId || date}:${registrantId}:${normalized}`;
     const [[recent]] = await connection.query("SELECT COUNT(*) total FROM sms_messages WHERE phone=? AND kind='registration' AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE", [normalized]);
     if (recent.total >= 10) { await connection.commit(); return 'rate_limited'; }
-    await connection.query('INSERT IGNORE INTO sms_messages (event_id, registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at, automatic_key) VALUES (?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL 1 HOUR), ?)', [eventId, registrantId, guardianId, normalized, 'registration', `Kidz Quest: ${child.first_name}'s pickup code is ${registrantId}. Please keep it private. Reply STOP to opt out.`, key]);
+    await connection.query('INSERT IGNORE INTO sms_messages (event_id, registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at, automatic_key, status) VALUES (?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL 1 HOUR), ?, ?)', [eventId, registrantId, guardianId, normalized, 'registration', `Kidz Quest: ${child.first_name}'s pickup code is ${registrantId}. Please keep it private. Reply STOP to opt out.`, key, smsMode() === 'dry-run' ? 'dry_run' : 'queued']);
     await connection.commit();
     return 'queued';
   } catch (error) { await connection.rollback(); throw error; } finally { connection.release(); }
@@ -53,7 +93,7 @@ export async function enqueueManual(registrantId, message) {
   if (!permission?.consented || permission.opted_out) throw new Error('This phone number has not opted in to texts or has opted out.');
   const [[recent]] = await pool.query("SELECT COUNT(*) total FROM sms_messages WHERE kind = 'manual' AND created_at > UTC_TIMESTAMP() - INTERVAL 1 MINUTE");
   if (recent.total >= 30) throw new Error('Too many messages. Please wait a minute.');
-  await pool.query("INSERT INTO sms_messages (registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at) VALUES (?, ?, ?, 'manual', ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL 1 HOUR))", [registrantId, rows[0].guardian_id, phone, message.trim()]);
+  await pool.query("INSERT INTO sms_messages (registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at, status) VALUES (?, ?, ?, 'manual', ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL 1 HOUR), ?)", [registrantId, rows[0].guardian_id, phone, message.trim(), smsMode() === 'dry-run' ? 'dry_run' : 'queued']);
 }
 
 export async function enrollAtCheckIn(registrantId) {
@@ -78,7 +118,7 @@ async function scheduleReminders(now) {
     const [[permission]] = await pool.query('SELECT consented, opted_out FROM sms_consent WHERE phone=?', [phone]);
     if (!permission?.consented || permission.opted_out) continue;
     const body = kind === 'reminder' ? `Kidz Quest: Pickup for ${child.first_name} is at 9:00 PM. Please bring pickup code ${child.id}.` : `Kidz Quest: ${child.first_name} is still checked in and needs to be picked up. Please bring pickup code ${child.id}.`;
-    await pool.query('INSERT IGNORE INTO sms_messages (event_id, registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at, automatic_key) VALUES (?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? MINUTE), ?)', [child.event_id, child.id, child.guardian_id, phone, kind, body, kind === 'reminder' ? 21 * 60 - minutes : 21 * 60 + 30 - minutes, `${kind}:${child.event_id}:${child.id}`]);
+    await pool.query('INSERT IGNORE INTO sms_messages (event_id, registrant_id, guardian_id, phone, kind, body, scheduled_at, expires_at, automatic_key, status) VALUES (?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? MINUTE), ?, ?)', [child.event_id, child.id, child.guardian_id, phone, kind, body, kind === 'reminder' ? 21 * 60 - minutes : 21 * 60 + 30 - minutes, `${kind}:${child.event_id}:${child.id}`, smsMode() === 'dry-run' ? 'dry_run' : 'queued']);
   }
 }
 
@@ -107,9 +147,13 @@ async function sendMessage(message) {
 }
 
 export async function runSmsWorker(now = new Date()) {
-  if (working || process.env.SMS_MODE === 'off' || !process.env.SMS_MODE) return;
+  if (working || smsMode() === 'off') return;
   working = true;
   try {
+    if (smsMode() === 'dry-run') {
+      await scheduleReminders(now);
+      return;
+    }
     await pool.query("UPDATE sms_messages SET status='unknown', error_detail='Processing interrupted; reconcile before retrying' WHERE status='processing' AND updated_at < UTC_TIMESTAMP() - INTERVAL 2 MINUTE");
     const [[backlog]] = await pool.query("SELECT COUNT(*) total FROM sms_messages WHERE status='queued' AND scheduled_at <= UTC_TIMESTAMP() AND (expires_at IS NULL OR expires_at > UTC_TIMESTAMP())");
     if (backlog.total > 300) console.warn(`SMS backlog: ${backlog.total} messages; check provider throughput and delivery windows.`);
@@ -124,7 +168,7 @@ export async function runSmsWorker(now = new Date()) {
 }
 
 export function startSmsWorker() {
-  if (!['dry-run', 'live'].includes(process.env.SMS_MODE)) return;
+  if (smsMode() === 'off') return;
   runSmsWorker();
   const timer = setInterval(runSmsWorker, 10000);
   timer.unref();
