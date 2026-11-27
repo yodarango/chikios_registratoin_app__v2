@@ -1,6 +1,7 @@
 (() => {
   const roster = document.getElementById('registrants-table');
   const search = document.getElementById('search');
+  const clearSearch = document.getElementById('search-clear');
   let genderFilter = null;
   let statusFilter = null;
   let searchTimer;
@@ -146,12 +147,22 @@
   }
 
   if (roster) {
+    const updateClearSearch = () => { clearSearch.hidden = !search.value; };
     search.addEventListener('input', () => {
+      updateClearSearch();
       clearTimeout(searchTimer);
       searchVersion++;
       searchRequest?.abort();
       searchTimer = setTimeout(() => searchRoster(), 250);
     });
+    clearSearch.addEventListener('click', () => {
+      search.value = '';
+      updateClearSearch();
+      clearTimeout(searchTimer);
+      searchRoster();
+      search.focus();
+    });
+    updateClearSearch();
     document.querySelectorAll('[data-filter-gender], [data-filter-status]').forEach((button) => {
       button.addEventListener('click', () => {
         const isGender = button.hasAttribute('data-filter-gender');
