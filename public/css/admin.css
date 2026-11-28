@@ -13,6 +13,8 @@
 .admin-team-label span { color: #d28a2f; }
 .admin-home-link, .back-link { color: #326d4e; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
 .admin-home-link:hover, .back-link:hover { text-decoration: underline; }
+.admin-logout { padding: .8rem 1.2rem; border: 1px solid #cddccf; border-radius: .8rem; background: #fff; color: #326d4e; font-size: 1.3rem; font-weight: 700; white-space: nowrap; }
+.admin-logout:hover { background: #edf5eb; }
 .admin-main { width: min(100% - 6rem, 110rem); max-width: none; margin: 0 auto; padding: 5rem 0 3rem; }
 .admin-welcome { display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin-bottom: 3rem; }
 .admin-eyebrow { display: flex; align-items: center; gap: .8rem; color: #53785b; font-size: 1.05rem; font-weight: 800; letter-spacing: .15em; }
@@ -80,6 +82,7 @@
 @media (max-width: 800px) { .roster-controls { flex-wrap: wrap; }.search-field { flex-basis: 100%; }.filter-group { flex: 1 1 auto; }.filter-buttons .filter-button { flex: 1; } }
 @media (max-width: 600px) { .admin-header-inner, .admin-main, .admin-detail-main { width: calc(100% - 3.2rem); }.admin-header-inner { min-height: 7.5rem; }.admin-logo img { width: 10rem; }.admin-team-label { display: none; }.admin-home-link { font-size: 1.2rem; }.admin-main { padding-top: 3rem; }.admin-welcome { margin-bottom: 2rem; }.welcome-sun { width: 5rem; height: 5rem; border-radius: 1.6rem; font-size: 2.6rem; }.admin-stats { gap: .7rem; }.stat-card { display: block; padding: 1.3rem 1rem; }.stat-icon { width: 3.5rem; height: 3.5rem; margin-bottom: .8rem; border-radius: 1.1rem; font-size: 1.7rem; }.stat-label { font-size: 1.05rem; }.stat-card strong { font-size: 2.3rem; }.roster-panel, .detail-card { padding: 2rem; }.roster-controls { gap: 1.5rem .8rem; }.filter-button { padding: 0 .8rem; font-size: 1.1rem; }.registrant-card { align-items: stretch; flex-direction: column; gap: 1.3rem; }.registrant-actions { justify-content: flex-end; }.registrant-actions .status-pill { margin-right: auto; }.detail-profile { flex-wrap: wrap; }.detail-profile .status-pill { margin-left: 0; }.detail-action-row { align-items: stretch; flex-direction: column; }.detail-action-row .status-action { width: 100%; } }
 @media (max-width: 767px) {
+  .admin-header-right { gap: .8rem; }
   .registrant-actions .status-info { grid-column: 1 / -1; }
   .detail-profile .status-info { margin-left: 0; }
   .admin-stats { grid-template-columns: minmax(0, 1fr); gap: 1rem; }

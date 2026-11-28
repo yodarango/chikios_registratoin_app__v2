@@ -34,6 +34,11 @@ indexRouter.get("/login", async (req, res) => {
   res.status(200).render("admin/login");
 });
 
+indexRouter.post("/logout", (req, res) => {
+  res.clearCookie("authorization", { path: "/", httpOnly: true, sameSite: "lax" });
+  res.redirect("/login");
+});
+
 // login
 indexRouter.post("/login", async (req, res) => {
   try {
