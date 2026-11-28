@@ -6,6 +6,7 @@ const privateRouter = express.Router();
 import express from "express";
 import { enrollAtCheckIn, smsMode } from "../services/sms.js";
 import { notifyRosterChanged, rosterEventStream } from "../services/rosterLive.js";
+import { statusAttribution } from "../utils/statusAttribution.js";
 
 // updates the registrant with the data incoming from the body
 privateRouter.put("/update/registrant/:id", async (req, res) => {
@@ -38,7 +39,7 @@ privateRouter.get("/", async (req, res) => {
   const registrant = new Registrant();
   const { results: registrants } = await registrant.searchAdminRegistrants("");
 
-  res.status(200).render("admin/index", { registrants });
+  res.status(200).render("admin/index", { registrants, statusAttribution });
 });
 
 privateRouter.get("/live/events", rosterEventStream);
@@ -75,7 +76,7 @@ privateRouter.get("/:id", async (req, res) => {
     return;
   }
 
-  res.status(200).render("admin/[id]", { registrant: singleRegistrant });
+  res.status(200).render("admin/[id]", { registrant: singleRegistrant, statusAttribution });
 });
 
 // checks out a registrant
@@ -85,7 +86,8 @@ privateRouter.post("/check-out/:id", async (req, res) => {
   registrant.id = req.params.id;
   registrant.checkedIn = false;
 
-  const { success } = await registrant.checkOut();
+  const actor = [req.user.first_name, req.user.last_name].filter(Boolean).join(" ") || req.user.username;
+  const { success } = await registrant.checkOut(actor);
 
   if (!success) {
     createResponse(res, {
@@ -97,7 +99,7 @@ privateRouter.post("/check-out/:id", async (req, res) => {
   }
 
   notifyRosterChanged();
-  createResponse(res, { data: req.body, error: null, success: true });
+  createResponse(res, { data: null, error: null, success: true });
 });
 
 // checks in a registrant
@@ -107,7 +109,8 @@ privateRouter.post("/check-in/:id", async (req, res) => {
   registrant.id = req.params.id;
   registrant.checkedIn = true;
 
-  const { success } = await registrant.checkIn();
+  const actor = [req.user.first_name, req.user.last_name].filter(Boolean).join(" ") || req.user.username;
+  const { success } = await registrant.checkIn(actor);
 
   if (!success) {
     createResponse(res, {
@@ -124,7 +127,7 @@ privateRouter.post("/check-in/:id", async (req, res) => {
     catch (error) { console.error('Could not assign checked-in child to event:', error.message); }
   }
 
-  createResponse(res, { data: req.body, error: null, success: true });
+  createResponse(res, { data: null, error: null, success: true });
 });
 
 // deletes a registrant

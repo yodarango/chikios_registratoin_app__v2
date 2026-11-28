@@ -84,12 +84,10 @@
 
           const res = await req.json();
 
-          if (res.data?.token) {
-            document.cookie = `authorization=${res.data.token}; expires=Thu, 18 Dec 2043 12:00:00 UTC; path=/`;
-
-            window.location.href = "/admin";
+          if (res.success && res.data?.redirect) {
+            window.location.href = res.data.redirect;
           } else {
-            showToast("Wrong username or password, please try again!", "error");
+            showToast(res.error || "Wrong username or password, please try again!", "error");
           }
         } catch (error) {
           console.error(error);

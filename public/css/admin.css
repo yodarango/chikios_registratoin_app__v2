@@ -57,6 +57,10 @@
 .registrant-info { min-width: 0; }.registrant-name { color: #263f36; font-family: Outfit, sans-serif; font-size: 1.6rem; font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }.registrant-name:hover { color: #2b7951; text-decoration: underline; }.registrant-name span { color: #5e8a6d; font-size: 1.2rem; }
 .registrant-info p, .detail-profile p { margin: .3rem 0 0; color: #5d7162; font-size: 1.2rem; }.registrant-info p span { padding: 0 .3rem; }.registrant-info p strong, .detail-profile p strong { color: #365d47; }
 .registrant-actions { display: flex; align-items: center; gap: 1rem; flex: 0 0 auto; }
+.status-info { display: flex; flex-direction: column; align-items: flex-start; gap: .3rem; min-width: 0; }
+.status-attribution { color: #536a5b; font-size: 1.1rem; overflow-wrap: anywhere; }
+.status-attribution:empty { display: none; }
+.detail-profile .status-info { margin-left: auto; }
 .status-pill { display: inline-flex; align-items: center; gap: .6rem; padding: .7rem 1rem; border-radius: 10rem; font-size: 1.1rem; font-weight: 800; white-space: nowrap; }.status-pill span { width: .7rem; height: .7rem; border-radius: 50%; background: currentColor; }.status-pill.is-in { background: #e2f3e5; color: #236540; }.status-pill.is-out { background: #fff0e5; color: #9c4a31; }
 .status-action { min-height: 4.2rem; min-width: 10rem; padding: .9rem 1.5rem; border: 1px solid transparent; border-radius: 1rem; color: #fff; font-size: 1.2rem; font-weight: 800; white-space: nowrap; }.status-action.action-in { background: #317652; }.status-action.action-out { background: #a85441; }.status-action:hover { filter: brightness(.9); }
 .delete-action { display: grid; place-items: center; width: 4.2rem; height: 4.2rem; padding: 0; border: 1px solid #e6d7d0; border-radius: 1rem; background: #fff; color: #a85441; font-size: 2.3rem; line-height: 1; }.delete-action:hover { background: #fff0eb; }
@@ -76,6 +80,8 @@
 @media (max-width: 800px) { .roster-controls { flex-wrap: wrap; }.search-field { flex-basis: 100%; }.filter-group { flex: 1 1 auto; }.filter-buttons .filter-button { flex: 1; } }
 @media (max-width: 600px) { .admin-header-inner, .admin-main, .admin-detail-main { width: calc(100% - 3.2rem); }.admin-header-inner { min-height: 7.5rem; }.admin-logo img { width: 10rem; }.admin-team-label { display: none; }.admin-home-link { font-size: 1.2rem; }.admin-main { padding-top: 3rem; }.admin-welcome { margin-bottom: 2rem; }.welcome-sun { width: 5rem; height: 5rem; border-radius: 1.6rem; font-size: 2.6rem; }.admin-stats { gap: .7rem; }.stat-card { display: block; padding: 1.3rem 1rem; }.stat-icon { width: 3.5rem; height: 3.5rem; margin-bottom: .8rem; border-radius: 1.1rem; font-size: 1.7rem; }.stat-label { font-size: 1.05rem; }.stat-card strong { font-size: 2.3rem; }.roster-panel, .detail-card { padding: 2rem; }.roster-controls { gap: 1.5rem .8rem; }.filter-button { padding: 0 .8rem; font-size: 1.1rem; }.registrant-card { align-items: stretch; flex-direction: column; gap: 1.3rem; }.registrant-actions { justify-content: flex-end; }.registrant-actions .status-pill { margin-right: auto; }.detail-profile { flex-wrap: wrap; }.detail-profile .status-pill { margin-left: 0; }.detail-action-row { align-items: stretch; flex-direction: column; }.detail-action-row .status-action { width: 100%; } }
 @media (max-width: 767px) {
+  .registrant-actions .status-info { grid-column: 1 / -1; }
+  .detail-profile .status-info { margin-left: 0; }
   .admin-stats { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
   .stat-card { display: flex; padding: 1.4rem 1.6rem; }
   .stat-icon { margin-bottom: 0; }

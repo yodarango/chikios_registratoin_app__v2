@@ -64,7 +64,7 @@ export function Registrant() {
     const escaped = term.replace(/[\\%_]/g, "\\$&");
     const pattern = `%${escaped}%`;
     const [results] = await pool.query(
-      `SELECT r.id, r.first_name, r.last_name, r.age, r.gender, r.checked_in,
+      `SELECT r.id, r.first_name, r.last_name, r.age, r.gender, r.checked_in, r.status_changed_by, DATE_FORMAT(r.status_changed_at, '%Y-%m-%dT%H:%i:%sZ') AS status_changed_at,
        (SELECT g.phone_number FROM guardian g WHERE g.registrant_id = r.id ORDER BY g.id DESC LIMIT 1) AS guardian_phone_number
        FROM registrant r
        WHERE (? = '' AND r.attendance LIKE '%GMC.2025%'
@@ -87,7 +87,7 @@ export function Registrant() {
   this.getSingleRegistrantById = async function () {
     try {
       const { results } = await executeQuery(
-        `SELECT r.*, 
+        `SELECT r.*, DATE_FORMAT(r.status_changed_at, '%Y-%m-%dT%H:%i:%sZ') AS status_changed_at,
       g.first_name as guardian_first_name, 
       g.last_name as guardian_last_name, 
       g.phone_number as guardian_phone_number
@@ -182,11 +182,11 @@ export function Registrant() {
     }
   };
 
-  this.checkIn = async function () {
+  this.checkIn = async function (actor) {
     try {
       const { results } = await executeQuery(
-        "UPDATE registrant SET checked_in = ? WHERE id = ?",
-        [this.checkedIn, this.id]
+        "UPDATE registrant SET checked_in = ?, status_changed_by = ?, status_changed_at = UTC_TIMESTAMP() WHERE id = ?",
+        [this.checkedIn, actor, this.id]
       );
 
       return { success: results.affectedRows > 0 };
@@ -195,11 +195,11 @@ export function Registrant() {
     }
   };
 
-  this.checkOut = async function () {
+  this.checkOut = async function (actor) {
     try {
       const { results } = await executeQuery(
-        "UPDATE registrant SET checked_in = ? WHERE id = ?",
-        [this.checkedIn, this.id]
+        "UPDATE registrant SET checked_in = ?, status_changed_by = ?, status_changed_at = UTC_TIMESTAMP() WHERE id = ?",
+        [this.checkedIn, actor, this.id]
       );
 
       return { success: results.affectedRows > 0 };

@@ -6,6 +6,9 @@ import { Guardian } from "../models/guardian.js";
 import express from "express";
 import { registerSms, normalizePhone, smsMode } from "../services/sms.js";
 import { notifyRosterChanged } from "../services/rosterLive.js";
+import { pool } from "../db/connection.js";
+import { normalizeUsername } from "../models/user.js";
+import bcrypt from "bcrypt";
 
 const indexRouter = express.Router();
 
@@ -33,23 +36,24 @@ indexRouter.get("/login", async (req, res) => {
 
 // login
 indexRouter.post("/login", async (req, res) => {
-  if (req.cookies.authorization) {
-    res.redirect("/admin/users");
-    return;
-  }
-
   try {
-    if (
-      req?.body?.username.toLowerCase().trim() === process.env.ADMIN_USERNAME &&
-      req?.body?.password.trim() === process.env.ADMIN_PASSWORD
-    ) {
-      const token = await signNewToken({
-        username: req?.body?.username,
-        email: req?.body?.admin_email,
-      });
-
-      createResponse(res, { data: { token }, error: null, success: true });
-      return;
+    const username = normalizeUsername(req.body?.username);
+    const password = req.body?.password;
+    if (username && username.length <= 100 && typeof password === "string" && password && Buffer.byteLength(password, "utf8") <= 72) {
+      const [rows] = await pool.execute("SELECT id, password_hash, type FROM users WHERE username = ? LIMIT 1", [username]);
+      const user = rows[0];
+      if (user && ["admin", "user"].includes(user.type) && await bcrypt.compare(password, user.password_hash)) {
+        const token = await signNewToken({ userId: user.id });
+        res.cookie("authorization", token, {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: req.secure || req.headers["x-forwarded-proto"]?.split(",")[0].trim() === "https",
+          maxAge: 14 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+        createResponse(res, { data: { redirect: user.type === "admin" ? "/admin" : "/" }, error: null, success: true });
+        return;
+      }
     }
 
     createResponse(res, {
@@ -58,9 +62,8 @@ indexRouter.post("/login", async (req, res) => {
       success: false,
     });
   } catch (error) {
-    console.error(error);
-
-    createResponse(res, { data: null, error: error, success: false });
+    console.error("Login failed:", error.message);
+    res.status(503).json({ data: null, error: "Login is temporarily unavailable.", success: false });
   }
 });
 

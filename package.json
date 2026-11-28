@@ -8,7 +8,9 @@
     "pm2": "pm2 start --name=chikios index.js --watch",
     "dev": "nodemon index.js",
     "start": "nodemon index.js",
-    "sync_db": "./sync_db.sh"
+    "sync_db": "./sync_db.sh",
+    "create-user": "node source/scripts/create-user.js",
+    "set-user-name": "node source/scripts/set-user-name.js"
   },
   "author": "Daniel Rangel",
   "license": "ISC",

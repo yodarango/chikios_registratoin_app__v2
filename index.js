@@ -16,6 +16,7 @@ import { requestLogger } from "./source/utils/index.js";
 import { smsAdminRouter, smsWebhookRouter } from "./source/controllers/sms.js";
 import { initializeSms, startSmsWorker } from "./source/services/sms.js";
 import { attachRosterWebSocket } from "./source/services/rosterLive.js";
+import { initializeUsers } from "./source/models/user.js";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,13 @@ app.use("/webhooks/twilio", smsWebhookRouter);
 app.use("/admin/sms", authenticateToken, smsAdminRouter);
 app.use("/admin", requestLogger, authenticateToken, privateRouter);
 app.use("/", requestLogger, indexRouter);
+
+try {
+  await initializeUsers();
+} catch (error) {
+  console.error("User database setup failed:", error.message);
+  process.exit(1);
+}
 
 const server = app.listen(process.env.PORT, async () => {
   console.log(`listening on port ${process.env.PORT}`);

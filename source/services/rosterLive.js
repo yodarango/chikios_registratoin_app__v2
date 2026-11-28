@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import { getAuthenticatedUser } from '../auth/getAuthenticatedUser.js';
 
 // Notifications carry no child information; clients fetch the current roster over HTTPS.
 const sockets = new Set();
@@ -14,17 +14,17 @@ function frame(opcode, value = Buffer.alloc(0)) {
   return Buffer.concat([Buffer.from([0x80 | opcode, data.length]), data]);
 }
 
-function isAuthorized(token) {
-  try { jwt.verify(token, process.env.JWT_SECRET); return true; } catch { return false; }
+async function isAuthorized(token) {
+  try { return (await getAuthenticatedUser(token))?.type === 'admin'; } catch { return false; }
 }
 
-export function notifyRosterChanged() {
+export async function notifyRosterChanged() {
   for (const client of sockets) {
-    if (!isAuthorized(client.token)) { client.socket.destroy(); continue; }
+    if (!await isAuthorized(client.token)) { client.socket.destroy(); continue; }
     try { if (client.socket.writableLength > 65536) client.socket.destroy(); else client.socket.write(frame(1, payload)); } catch { client.socket.destroy(); }
   }
   for (const client of streams) {
-    if (!isAuthorized(client.token)) { client.res.end(); continue; }
+    if (!await isAuthorized(client.token)) { client.res.end(); continue; }
     try { client.res.write(`data: ${payload}\n\n`); } catch { client.res.end(); }
   }
 }
@@ -35,8 +35,8 @@ export function rosterEventStream(req, res) {
   res.write(': connected\n\n');
   const client = { res, token: req.cookies.authorization };
   streams.add(client);
-  const timer = setInterval(() => {
-    if (!isAuthorized(client.token)) return res.end();
+  const timer = setInterval(async () => {
+    if (!await isAuthorized(client.token)) return res.end();
     res.write(': heartbeat\n\n');
   }, 25000);
   req.on('close', () => { clearInterval(timer); streams.delete(client); });
@@ -52,9 +52,9 @@ export function attachRosterWebSocket(server) {
     if (typeof key !== 'string' || !/^[A-Za-z0-9+/]{22}==$/.test(key)) return reject();
     const scheme = req.headers['x-forwarded-proto']?.split(',')[0].trim() || (req.socket.encrypted ? 'https' : 'http');
     if (!['http', 'https'].includes(scheme) || req.headers.origin !== `${scheme}://${req.headers.host}`) return reject();
-    parseCookies(req, {}, () => {
+    parseCookies(req, {}, async () => {
       const token = req.cookies?.authorization;
-      if (!isAuthorized(token)) return reject();
+      if (!await isAuthorized(token) || socket.destroyed) return reject();
       const accept = crypto.createHash('sha1').update(key + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64');
       socket.write(`HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: ${accept}\r\n\r\n`);
       const client = { socket, token, alive: true };
@@ -83,9 +83,9 @@ export function attachRosterWebSocket(server) {
       if (head.length) read(head);
     });
   });
-  const heartbeat = setInterval(() => {
+  const heartbeat = setInterval(async () => {
     for (const client of sockets) {
-      if (!client.alive || !isAuthorized(client.token)) { client.socket.destroy(); continue; }
+      if (!client.alive || !await isAuthorized(client.token)) { client.socket.destroy(); continue; }
       client.alive = false;
       try { client.socket.write(frame(9)); } catch { client.socket.destroy(); }
     }

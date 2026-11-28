@@ -9,6 +9,13 @@
   let searchVersion = 0;
   const detail = document.querySelector('.detail-card[data-registrant-id]');
 
+  function updateAttribution(card, registrant) {
+    const target = card.querySelector('[data-status-attribution]');
+    const date = new Date(registrant.status_changed_at);
+    target.textContent = registrant.status_changed_by && registrant.status_changed_at && !Number.isNaN(date.getTime())
+      ? `by ${registrant.status_changed_by} @${new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(date)}` : '';
+  }
+
   function updateRoster() {
     if (!roster) return;
     const cards = Array.from(roster.querySelectorAll('[data-registrant-id]'));
@@ -36,7 +43,8 @@
     card.dataset.guardianPhone = registrant.guardian_phone_number || '';
     card.dataset.registrantGender = registrant.gender;
     card.dataset.registrantCheckedIn = String(isIn);
-    card.innerHTML = '<div class="registrant-identity"><span class="registrant-avatar" aria-hidden="true"></span><div class="registrant-info"><a class="registrant-name"></a><p>Age <span data-age></span> <span aria-hidden="true">·</span> Pickup code <strong></strong></p></div></div><div class="registrant-actions"><span class="status-pill" data-status-label><span aria-hidden="true"></span></span><button type="button" class="pickup-action" data-pickup-message title="Open pickup message on your phone">Pickup ↗</button><button type="button" class="message-action" data-open-sms title="Text parent">✉</button><button type="button" class="status-action" data-status-action></button><button type="button" class="delete-action" data-delete-action title="Delete registration">×</button></div>';
+    card.innerHTML = '<div class="registrant-identity"><span class="registrant-avatar" aria-hidden="true"></span><div class="registrant-info"><a class="registrant-name"></a><p>Age <span data-age></span> <span aria-hidden="true">·</span> Pickup code <strong></strong></p></div></div><div class="registrant-actions"><div class="status-info"><span class="status-pill" data-status-label><span aria-hidden="true"></span></span><small class="status-attribution" data-status-attribution></small></div><button type="button" class="pickup-action" data-pickup-message title="Open pickup message on your phone">Pickup ↗</button><button type="button" class="message-action" data-open-sms title="Text parent">✉</button><button type="button" class="status-action" data-status-action></button><button type="button" class="delete-action" data-delete-action title="Delete registration">×</button></div>';
+    updateAttribution(card, registrant);
     card.querySelector('.registrant-avatar').textContent = (registrant.first_name || '?').charAt(0).toUpperCase();
     const link = card.querySelector('.registrant-name');
     link.href = `/admin/${encodeURIComponent(registrant.id)}`;
@@ -107,7 +115,7 @@
       const result = await response.json();
       if (version !== detailVersion || !result.success) return;
       const child = result.registrants.find(item => String(item.id) === detail.dataset.registrantId);
-      if (child) applyStatus(detail, Number(child.checked_in) > 0);
+      if (child) { applyStatus(detail, Number(child.checked_in) > 0); updateAttribution(detail, child); }
       else { detail.querySelector('[data-status-action]').disabled = true; detail.querySelector('[data-status-label]').textContent = 'Registration removed'; }
     } catch (error) { console.error('Could not refresh registration status:', error); }
   }
@@ -222,6 +230,7 @@
         card.remove();
       } else {
         applyStatus(card, !isIn);
+        if (!roster) await refreshDetail();
       }
       if (roster) {
         clearTimeout(searchTimer);
