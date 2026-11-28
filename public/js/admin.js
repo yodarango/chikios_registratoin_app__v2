@@ -13,7 +13,7 @@
     const target = card.querySelector('[data-status-attribution]');
     const date = new Date(registrant.status_changed_at);
     target.textContent = registrant.status_changed_by && registrant.status_changed_at && !Number.isNaN(date.getTime())
-      ? `by ${registrant.status_changed_by} @${new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(date)}` : '';
+      ? `by ${registrant.status_changed_by} @${new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hourCycle: 'h12' }).format(date)}` : '';
   }
 
   function updateRoster() {
